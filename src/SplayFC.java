@@ -84,12 +84,14 @@ public class SplayFC implements ISplayFC {
 		/* TODO: You need to fill the rest of this in with code uses s to modify top and 
 		 * then returns appropriately.*/
 
-		Iterator snapShot = new snapShotIterator();
-		//Assume that the snapShot iterator is a cell for now.
-		while (snapShot.hasNext() && snapShot.key.compareTo(k) != 0) {
-			
-		}
-		return false;
+		Iterator snapShot = snapShotIterator();
+		/* Assume that the snapShot iterator is a cell for now.
+         * The following line doesn't work as the iterator doesn't have any methods
+         * to find the key.
+         */
+		//while (snapShot.hasNext() && snapShot.key().compareTo(k) != 0) {
+		//}
+		//return false;
 		throw new RuntimeException("add: implementation incomplete");
 	}  
 
