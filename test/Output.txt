@@ -1,0 +1,863 @@
+------------------------ Starting test for SplayFC add ------------------------
+t1 =
+[]
+
+t1.add("seam")
+t1 =
+ -seam
+
+t1.add("heal")
+t1 =
+ -heal
+    \-seam
+
+t1.add("he")
+t1 =
+ -he
+    \-heal
+        \-seam
+
+t1.add("ham")
+t1 =
+ -ham
+    \-he
+        \-heal
+            \-seam
+
+t1.add("some")
+t1 =
+            /-ham
+        /-he
+       |    \-heal
+    /-seam
+ -some
+
+t1.add("hear")
+t1 =
+            /-ham
+        /-he
+    /-heal
+ -hear
+    \-seam
+        \-some
+
+t1.add("help")
+t1 =
+                /-ham
+            /-he
+        /-heal
+    /-hear
+ -help
+    \-seam
+        \-some
+
+t1.add("helped")
+t1 =
+                    /-ham
+                /-he
+            /-heal
+        /-hear
+    /-help
+ -helped
+    \-seam
+        \-some
+
+t1.add("heart")
+t1 =
+                /-ham
+            /-he
+        /-heal
+    /-hear
+ -heart
+    \-help
+        \-helped
+            \-seam
+                \-some
+
+t1.add("so")
+t1 =
+                        /-ham
+                    /-he
+                /-heal
+            /-hear
+        /-heart
+    /-help
+   |   |    /-helped
+   |    \-seam
+ -so
+    \-some
+
+t1.add("head")
+t1 =
+        /-ham
+    /-he
+ -head
+   |        /-heal
+   |    /-hear
+   |   |    \-heart
+    \-help
+       |        /-helped
+       |    /-seam
+        \-so
+            \-some
+
+t1.add("hello")
+t1 =
+                /-ham
+            /-he
+        /-head
+       |   |    /-heal
+       |    \-hear
+    /-heart
+ -hello
+    \-help
+       |        /-helped
+       |    /-seam
+        \-so
+            \-some
+
+---------------------- Starting test for SplayFC contains ----------------------
+t1.contains("hear") = true
+t1 =
+            /-ham
+        /-he
+    /-head
+   |    \-heal
+ -hear
+    \-heart
+        \-hello
+            \-help
+               |        /-helped
+               |    /-seam
+                \-so
+                    \-some
+
+t1.contains("help") = true
+t1 =
+                    /-ham
+                /-he
+            /-head
+           |    \-heal
+        /-hear
+    /-heart
+   |    \-hello
+ -help
+   |        /-helped
+   |    /-seam
+    \-so
+        \-some
+
+t1.contains("head") = true
+t1 =
+        /-ham
+    /-he
+ -head
+   |        /-heal
+   |    /-hear
+    \-heart
+       |    /-hello
+        \-help
+           |        /-helped
+           |    /-seam
+            \-so
+                \-some
+
+t1.contains("h") = false
+t1 =
+ -ham
+    \-he
+        \-head
+           |        /-heal
+           |    /-hear
+            \-heart
+               |    /-hello
+                \-help
+                   |        /-helped
+                   |    /-seam
+                    \-so
+                        \-some
+
+t1.contains("x") = false
+t1 =
+        /-ham
+    /-he
+   |   |    /-head
+   |   |   |   |    /-heal
+   |   |   |    \-hear
+   |    \-heart
+   |       |        /-hello
+   |       |    /-help
+   |       |   |   |    /-helped
+   |       |   |    \-seam
+   |        \-so
+ -some
+
+t1.contains("hearing") = false
+t1 =
+        /-ham
+    /-he
+   |    \-head
+   |        \-heal
+ -hear
+   |    /-heart
+   |   |   |        /-hello
+   |   |   |    /-help
+   |   |   |   |   |    /-helped
+   |   |   |   |    \-seam
+   |   |    \-so
+    \-some
+
+----------------- Starting test for SplayFC contains:in-order -----------------
+t1.contains("ham") = true
+t1 =
+ -ham
+    \-he
+       |    /-head
+       |   |    \-heal
+        \-hear
+           |    /-heart
+           |   |   |        /-hello
+           |   |   |    /-help
+           |   |   |   |   |    /-helped
+           |   |   |   |    \-seam
+           |   |    \-so
+            \-some
+
+t1.contains("he") = true
+t1 =
+    /-ham
+ -he
+   |    /-head
+   |   |    \-heal
+    \-hear
+       |    /-heart
+       |   |   |        /-hello
+       |   |   |    /-help
+       |   |   |   |   |    /-helped
+       |   |   |   |    \-seam
+       |   |    \-so
+        \-some
+
+t1.contains("head") = true
+t1 =
+        /-ham
+    /-he
+ -head
+   |    /-heal
+    \-hear
+       |    /-heart
+       |   |   |        /-hello
+       |   |   |    /-help
+       |   |   |   |   |    /-helped
+       |   |   |   |    \-seam
+       |   |    \-so
+        \-some
+
+t1.contains("heal") = true
+t1 =
+            /-ham
+        /-he
+    /-head
+ -heal
+    \-hear
+       |    /-heart
+       |   |   |        /-hello
+       |   |   |    /-help
+       |   |   |   |   |    /-helped
+       |   |   |   |    \-seam
+       |   |    \-so
+        \-some
+
+t1.contains("hear") = true
+t1 =
+                /-ham
+            /-he
+        /-head
+    /-heal
+ -hear
+   |    /-heart
+   |   |   |        /-hello
+   |   |   |    /-help
+   |   |   |   |   |    /-helped
+   |   |   |   |    \-seam
+   |   |    \-so
+    \-some
+
+t1.contains("heart") = true
+t1 =
+                    /-ham
+                /-he
+            /-head
+        /-heal
+    /-hear
+ -heart
+   |            /-hello
+   |        /-help
+   |       |   |    /-helped
+   |       |    \-seam
+   |    /-so
+    \-some
+
+t1.contains("hello") = true
+t1 =
+                        /-ham
+                    /-he
+                /-head
+            /-heal
+        /-hear
+    /-heart
+ -hello
+   |    /-help
+   |   |   |        /-helped
+   |   |   |    /-seam
+   |   |    \-so
+    \-some
+
+t1.contains("help") = true
+t1 =
+                            /-ham
+                        /-he
+                    /-head
+                /-heal
+            /-hear
+        /-heart
+    /-hello
+ -help
+   |            /-helped
+   |        /-seam
+   |    /-so
+    \-some
+
+t1.contains("helped") = true
+t1 =
+                                /-ham
+                            /-he
+                        /-head
+                    /-heal
+                /-hear
+            /-heart
+        /-hello
+    /-help
+ -helped
+   |    /-seam
+   |   |    \-so
+    \-some
+
+t1.contains("seam") = true
+t1 =
+                                    /-ham
+                                /-he
+                            /-head
+                        /-heal
+                    /-hear
+                /-heart
+            /-hello
+        /-help
+    /-helped
+ -seam
+   |    /-so
+    \-some
+
+t1.contains("so") = true
+t1 =
+                                        /-ham
+                                    /-he
+                                /-head
+                            /-heal
+                        /-hear
+                    /-heart
+                /-hello
+            /-help
+        /-helped
+    /-seam
+ -so
+    \-some
+
+t1.contains("some") = true
+t1 =
+                                            /-ham
+                                        /-he
+                                    /-head
+                                /-heal
+                            /-hear
+                        /-heart
+                    /-hello
+                /-help
+            /-helped
+        /-seam
+    /-so
+ -some
+
+---------------- Starting test for SplayFC contains:rebalancing ----------------
+t1.contains("h") = false
+t1 =
+ -ham
+   |                    /-he
+   |                /-head
+   |               |    \-heal
+   |            /-hear
+   |           |    \-heart
+   |        /-hello
+   |       |    \-help
+   |    /-helped
+   |   |    \-seam
+    \-so
+        \-some
+
+t1.contains("hand") = false
+t1 =
+    /-ham
+ -he
+   |        /-head
+   |       |   |    /-heal
+   |       |    \-hear
+   |       |        \-heart
+   |    /-hello
+   |   |   |    /-help
+   |   |    \-helped
+   |   |        \-seam
+    \-so
+        \-some
+
+t1.contains("hello") = true
+t1 =
+        /-ham
+    /-he
+   |    \-head
+   |       |    /-heal
+   |        \-hear
+   |            \-heart
+ -hello
+   |        /-help
+   |    /-helped
+   |   |    \-seam
+    \-so
+        \-some
+
+
+---------------------- Starting test for SplayFC iterator ----------------------
+snapShotIteration over t1 ...
+ -ham
+    \-he
+       |    /-head
+       |   |   |    /-heal
+       |   |    \-hear
+       |   |        \-heart
+        \-hello
+           |        /-help
+           |    /-helped
+           |   |    \-seam
+            \-so
+                \-some
+
+1 Next: "ham"
+ -he
+   |    /-head
+   |   |   |    /-heal
+   |   |    \-hear
+   |   |        \-heart
+    \-hello
+       |        /-help
+       |    /-helped
+       |   |    \-seam
+        \-so
+            \-some
+
+2 Next: "he"
+ -head
+   |        /-heal
+   |    /-hear
+   |   |    \-heart
+    \-hello
+       |        /-help
+       |    /-helped
+       |   |    \-seam
+        \-so
+            \-some
+
+3 Next: "head"
+ -heal
+    \-hear
+       |    /-heart
+        \-hello
+           |        /-help
+           |    /-helped
+           |   |    \-seam
+            \-so
+                \-some
+
+4 Next: "heal"
+ -hear
+   |    /-heart
+    \-hello
+       |        /-help
+       |    /-helped
+       |   |    \-seam
+        \-so
+            \-some
+
+5 Next: "hear"
+ -heart
+    \-hello
+       |        /-help
+       |    /-helped
+       |   |    \-seam
+        \-so
+            \-some
+
+6 Next: "heart"
+ -hello
+   |        /-help
+   |    /-helped
+   |   |    \-seam
+    \-so
+        \-some
+
+7 Next: "hello"
+ -help
+    \-helped
+       |    /-seam
+        \-so
+            \-some
+
+8 Next: "help"
+ -helped
+   |    /-seam
+    \-so
+        \-some
+
+9 Next: "helped"
+ -seam
+    \-so
+        \-some
+
+10 Next: "seam"
+ -so
+    \-some
+
+11 Next: "so"
+ -some
+
+12 Next: "some"
+[]
+
+t1 =
+                /-ham
+            /-he
+           |    \-head
+           |       |    /-heal
+           |        \-hear
+           |            \-heart
+        /-hello
+    /-help
+ -helped
+    \-seam
+        \-so
+            \-some
+
+updatingIterator over t1 ...
+
+1 Next: "ham"
+2 Next: "he"
+3 Next: "head"
+4 Next: "heal"
+5 Next: "hear"
+6 Next: "heart"
+7 Next: "hello"
+8 Next: "help"
+9 Next: "seam"
+10 Next: "so"
+thrown java.util.ConcurrentModificationException
+t1 =
+                /-ham
+            /-he
+           |    \-head
+           |       |    /-heal
+           |        \-hear
+           |            \-heart
+        /-hello
+    /-help
+ -helped
+   |    /-seam
+    \-so
+        \-some
+
+---------------------- Starting test for SplayFC headset ----------------------
+t1.headSet("") = 
+[]
+
+t1.headSet("he") = 
+ -ham
+
+t1.headSet("hea") = 
+    /-ham
+ -he
+
+t1.headSet("hear") = 
+    /-ham
+ -he
+    \-head
+        \-heal
+
+t1.headSet("heart") = 
+    /-ham
+ -he
+   |    /-head
+   |   |    \-heal
+    \-hear
+
+t1.headSet("hearts") = 
+        /-ham
+    /-he
+   |   |    /-head
+   |   |   |    \-heal
+   |    \-hear
+ -heart
+
+t1.headSet("x") = 
+                        /-ham
+                    /-he
+                   |    \-head
+                   |       |    /-heal
+                   |        \-hear
+                   |            \-heart
+                /-hello
+            /-help
+        /-helped
+       |    \-seam
+    /-so
+ -some
+
+---------------------- Starting test for SplayFC tailset ----------------------
+
+t1.tailSet("") = 
+ -ham
+   |    /-he
+   |   |   |    /-head
+   |   |   |   |   |    /-heal
+   |   |   |   |    \-hear
+   |   |   |   |        \-heart
+   |   |    \-hello
+    \-help
+        \-helped
+           |    /-seam
+            \-so
+                \-some
+
+t1.tailSet("he") = 
+ -he
+   |        /-head
+   |       |   |    /-heal
+   |       |    \-hear
+   |       |        \-heart
+   |    /-hello
+    \-help
+        \-helped
+           |    /-seam
+            \-so
+                \-some
+
+t1.tailSet("heal") = 
+ -heal
+   |        /-hear
+   |       |    \-heart
+   |    /-hello
+    \-help
+        \-helped
+           |    /-seam
+            \-so
+                \-some
+
+t1.tailSet("seal") = 
+ -seam
+    \-so
+        \-some
+
+t1.tailSet("sead") = 
+ -seam
+    \-so
+        \-some
+
+t1.tailSet("seem") = 
+ -so
+    \-some
+
+----------------------- Starting test for SplayFC subSet -----------------------
+
+t1.subSet("", "x") = 
+ -ham
+   |        /-he
+   |       |   |    /-head
+   |       |   |   |   |    /-heal
+   |       |   |   |    \-hear
+   |       |   |   |        \-heart
+   |       |    \-hello
+   |    /-help
+   |   |    \-helped
+   |   |        \-seam
+    \-so
+        \-some
+
+t1.subSet("he", "heart") = 
+ -he
+   |    /-head
+   |   |    \-heal
+    \-hear
+
+t1.subSet("h", "s") = 
+ -ham
+    \-he
+       |        /-head
+       |       |    \-heal
+       |    /-hear
+        \-heart
+           |        /-hello
+           |    /-help
+            \-helped
+
+t1.subSet("s", "h") = 
+[]
+
+
+----------------------- Starting test for SplayFC clone -----------------------
+t2.add("clone")
+t2 =
+ -clone
+    \-ham
+       |    /-he
+       |   |   |    /-head
+       |   |   |   |    \-heal
+       |   |    \-hear
+        \-heart
+           |            /-hello
+           |        /-help
+           |    /-helped
+            \-seam
+                \-so
+                    \-some
+
+t2.add("here")
+t2 =
+            /-clone
+        /-ham
+       |   |    /-he
+       |   |   |   |    /-head
+       |   |   |   |   |    \-heal
+       |   |   |    \-hear
+       |    \-heart
+       |       |    /-hello
+       |        \-help
+    /-helped
+ -here
+    \-seam
+        \-so
+            \-some
+
+t1 =
+ -ham
+   |    /-he
+   |   |   |    /-head
+   |   |   |   |    \-heal
+   |   |    \-hear
+    \-heart
+       |            /-hello
+       |        /-help
+       |    /-helped
+        \-seam
+            \-so
+                \-some
+
+----------------------- Starting test for SplayFC remove -----------------------
+t1 =
+ -ham
+   |    /-he
+   |   |   |    /-head
+   |   |   |   |    \-heal
+   |   |    \-hear
+    \-heart
+       |            /-hello
+       |        /-help
+       |    /-helped
+        \-seam
+            \-so
+                \-some
+
+t1.remove("ham") ...
+t1 =
+    /-he
+   |   |    /-head
+   |   |   |    \-heal
+   |    \-hear
+ -heart
+   |            /-hello
+   |        /-help
+   |    /-helped
+    \-seam
+        \-so
+            \-some
+
+t1.remove("he") ...
+t1 =
+        /-head
+       |    \-heal
+    /-hear
+ -heart
+   |            /-hello
+   |        /-help
+   |    /-helped
+    \-seam
+        \-so
+            \-some
+
+t1.remove("seam") ...
+t1 =
+            /-head
+           |    \-heal
+        /-hear
+    /-heart
+   |   |    /-hello
+   |    \-help
+ -helped
+    \-so
+        \-some
+
+t1.remove("hear") ...
+t1 =
+    /-head
+ -heal
+    \-heart
+       |        /-hello
+       |    /-help
+        \-helped
+            \-so
+                \-some
+
+t1.remove("heal") ...
+t1 =
+ -head
+    \-heart
+       |        /-hello
+       |    /-help
+        \-helped
+            \-so
+                \-some
+
+t1.remove("hello") ...
+t1 =
+    /-head
+ -heart
+    \-help
+        \-helped
+            \-so
+                \-some
+
+t1.remove("helped") ...
+t1 =
+        /-head
+    /-heart
+ -help
+    \-so
+        \-some
+
+
+----------------------------------- Finished -----------------------------------
