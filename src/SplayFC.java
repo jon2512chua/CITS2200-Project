@@ -84,12 +84,24 @@ public class SplayFC implements ISplayFC {
             {
                 return cell(c.lt.key(), c.lt.lt, cell(c.key(), c.lt.rt, c.rt));
             }
-        } else if (compareToCKey < 0 && c.lt != null) {                   // Search right
+        } else if (compareToCKey < 0 && c.rt != null) {                   // Search right
+            int compareToRtKey = k.compareTo(c.rt.key());
 
-            // Replace this with code for the right cases, similar to the left cases
-            // above, but with left and right swapped.
-            throw new RuntimeException("splay: implementation incomplete");
+            if (compareToRtKey < 0 && c.rt.rt != null) {             // right zig-zig step
+                Cell rr = splay(c.rt.rt, k);                     // Search recursively
+                Cell newLL = cell(c.key(), c.rt.lt, c.lt);                // Rearrange
+                return cell(rr.key(), rr.rt, cell(c.rt.key(), rr.lt, newLL));
 
+            } else if (compareToRtKey > 0 && c.rt.lt != null) {    // right zig-zag step
+
+                // Replace this with code similar to the zig-zig step above, but
+                // following the zig-zag case in the specification.
+                throw new RuntimeException("splay: implementation incomplete");
+
+            } else // right zig step
+            {
+                return cell(c.rt.key(), c.rt.rt, cell(c.key(), c.rt.lt, c.lt));
+            }
         } else {
             return c;  // Special cases 1 and 2 in the specification
         }
