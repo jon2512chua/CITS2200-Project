@@ -148,8 +148,8 @@ public class Test {
 	 * @param args the command line arguments (ignored)
 	 */
 	public static void main(String[] args) {
-		//SplayFC t1 = new SplayFC();
-		SplayFC t1 = new SplayFCMODEL();
+		SplayFC t1 = new SplayFC();
+		//SplayFC t1 = new SplayFCMODEL();
 		String name = "t1";
 
 		printDivider("------ Starting test for SplayFC add ------");

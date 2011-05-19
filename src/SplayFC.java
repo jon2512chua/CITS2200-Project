@@ -76,31 +76,36 @@ public class SplayFC implements ISplayFC {
 
             } else if (compareToLtKey > 0 && c.lt.rt != null) {    // left zig-zag step
 
-                // Replace this with code similar to the zig-zig step above, but
-                // following the zig-zag case in the specification.
-                throw new RuntimeException("splay: implementation incomplete");
-
+                Cell lr = splay(c.lt.rt, k);
+                // rearranged parent
+                Cell newRRP = cell(c.lt.key(), c.lt.lt, c.lt.rt.lt);
+                // rearranged grandparent
+                Cell newRRG = cell(c.key(), c.lt.rt.rt, c.rt);
+                return cell(lr.key(), newRRP, newRRG);
             } else // left zig step
             {
                 return cell(c.lt.key(), c.lt.lt, cell(c.key(), c.lt.rt, c.rt));
             }
-        } else if (compareToCKey < 0 && c.rt != null) {                   // Search right
+        } else if (compareToCKey > 0 && c.rt != null) {                   // Search right
             int compareToRtKey = k.compareTo(c.rt.key());
 
-            if (compareToRtKey < 0 && c.rt.rt != null) {             // right zig-zig step
+            if (compareToRtKey > 0 && c.rt.rt != null) {             // right zig-zig step
                 Cell rr = splay(c.rt.rt, k);                     // Search recursively
-                Cell newLL = cell(c.key(), c.rt.lt, c.lt);                // Rearrange
-                return cell(rr.key(), rr.rt, cell(c.rt.key(), rr.lt, newLL));
+                Cell newRR = cell(c.key(), c.lt, c.rt.lt);                // Rearrange
+                return cell(rr.key(), cell(c.rt.key(), newRR, rr.lt), rr.rt);
 
             } else if (compareToRtKey > 0 && c.rt.lt != null) {    // right zig-zag step
 
-                // Replace this with code similar to the zig-zig step above, but
-                // following the zig-zag case in the specification.
-                throw new RuntimeException("splay: implementation incomplete");
+                Cell rl = splay(c.rt.lt, k);
+                // rearranged parent
+                Cell newRRP = cell(c.rt.key(), c.rt.lt.rt, c.rt.rt);
+                // rearranged grandparent
+                Cell newRRG = cell(c.key(), c.lt, c.rt.lt.lt);
+                return cell(rl.key(), newRRG, newRRP);
 
             } else // right zig step
             {
-                return cell(c.rt.key(), c.rt.rt, cell(c.key(), c.rt.lt, c.lt));
+                return cell(c.rt.key(), cell(c.key(), c.lt, c.rt.lt), c.rt.rt);
             }
         } else {
             return c;  // Special cases 1 and 2 in the specification
