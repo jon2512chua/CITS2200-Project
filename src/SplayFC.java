@@ -9,7 +9,7 @@ public class SplayFC implements ISplayFC {
 
     public Cell top;  // Stores the current root cell
     /**
-     * Strings that are below (STRING_MIN) and above (STRING_MAX) all the words
+     * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
      * that will be in a SplayFC tree.  Splaying on these is sometimes useful.
      */
     final static String STRING_MIN = "";
