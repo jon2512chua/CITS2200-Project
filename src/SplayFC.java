@@ -66,11 +66,6 @@ public class SplayFC implements ISplayFC {
             throw new NullPointerException("splay requires a non-null Cell");
         }
 
-        // To help get you started, the code below shows how to implement
-        // the cases for a left "zig-zig" step and a left "zig" step.  You need to
-        // add the case for a left "zig-zag" step, and the cases for all three
-        // kinds of right step (which mirror the left cases).
-
         int compareToCKey = k.compareTo(c.key());
 
         //The following section compares the current cell c.
@@ -141,21 +136,6 @@ public class SplayFC implements ISplayFC {
                 return true;
             }
         }
-
-        /* TODO: You need to fill the rest of this in with code uses s to modify top and
-         * then returns appropriately.*/
-
-        //  Iterator snapShot = SnapShotIterator(top); // snapShot at root of tree.
-        /* Assume that the snapShot iterator is a cell for now.
-         * The following line doesn't work as the iterator doesn't have any methods
-         * to find the key.
-         */
-        // Searching if the string k is in the tree
-//        while (snapShot.hasNext() && ((Cell) snapShot).key().compareTo(k) != 0) {
-//        	snapShot.next();
-//        }
-//        return false;
-        //throw new RuntimeException("add: implementation incomplete");
     }
 
     // Implement the rest of the methods of SplayFC below, along with any private methods you use.
