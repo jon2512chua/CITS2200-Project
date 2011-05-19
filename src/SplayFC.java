@@ -8,14 +8,12 @@ import java.util.Iterator;
 public class SplayFC implements ISplayFC {
 
     public Cell top;  // Stores the current root cell
-    
     /**
      * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
      * that will be in a SplayFC tree.  Splaying on these is sometimes useful.
      */
     final static String STRING_MIN = "";
     final static String STRING_MAX = Character.toString(Character.MAX_VALUE);
-    
     //Private helper count, used to count number of items in the tree
     private int count = 0;
 
@@ -56,11 +54,11 @@ public class SplayFC implements ISplayFC {
     private static Cell cell(String k, Cell l, Cell r) {
         return new Cell(k, l, r);
     }
-    
+
     // Private helper method
     // Find the number of valid nodes in the tree, ie number of contents in the tree
     private int num() {
-    	return count;
+        return count;
     }
 
     public Cell splay(Cell c, String k) {
@@ -125,29 +123,29 @@ public class SplayFC implements ISplayFC {
     public boolean add(String k) {
         if (top == null) {
             top = cell(k, null, null);
-            count ++; 
+            count++;
             return true;
         }
         Cell s = splay(top, k); // now k is the root, and the tree has been rebalanced/sorted, or closest to k, 
-        						// ie the node with lt that is less than k and rt that is greater to k 
-        if(s.key() == k) {
-        	return true; // there is a key s that already contains string k
+        // ie the node with lt that is less than k and rt that is greater to k
+        if (s.key() == k) {
+            return true; // there is a key s that already contains string k
         } else {
-	        if(k.compareTo(s.lt.key()) < 0 && k.compareTo(s.key()) > 0 ) {
-	        	Cell sk = cell(k, s.lt, s); // creates a new cell node, where its between left tree of s and s
-	        	count ++;
-	        	return true;
-	        } else {
-	        	Cell sk = cell(k, s, s.rt); // creates a new cell node, where its between s and right tree of s
-	        	count ++;
-	        	return true;
-	        }
+            if (k.compareTo(s.lt.key()) < 0 && k.compareTo(s.key()) > 0) {
+                Cell sk = cell(k, s.lt, s); // creates a new cell node, where its between left tree of s and s
+                count++;
+                return true;
+            } else {
+                Cell sk = cell(k, s, s.rt); // creates a new cell node, where its between s and right tree of s
+                count++;
+                return true;
+            }
         }
 
         /* TODO: You need to fill the rest of this in with code uses s to modify top and
          * then returns appropriately.*/
 
-      //  Iterator snapShot = SnapShotIterator(top); // snapShot at root of tree.
+        //  Iterator snapShot = SnapShotIterator(top); // snapShot at root of tree.
         /* Assume that the snapShot iterator is a cell for now.
          * The following line doesn't work as the iterator doesn't have any methods
          * to find the key.
@@ -167,11 +165,11 @@ public class SplayFC implements ISplayFC {
 
     // TODO
     public boolean contains(String k) {
-    	// Need iterator at the start of the tree/ root
-    	
+        // Need iterator at the start of the tree/ root
+
         throw new RuntimeException("contains: implementation incomplete");
     }
-    
+
     // TODO
     public SplayFC headSet(String k) {
         throw new RuntimeException("headSet: implementation incomplete");
@@ -189,63 +187,62 @@ public class SplayFC implements ISplayFC {
         throw new RuntimeException("clone: implementation incomplete");
     }
 
-//    public Iterator<String> snapShotIterator(Cell root) { 
-//    	ssi = root;
-//    	return ssi;
-//    	//throw new RuntimeException("iterator: implementation incomplete"); 
-//    	}
+    public Iterator<String> snapShotIterator() {
+        return new SnapShotIterator(getTop());
+    }
 
     public Iterator<String> updatingIterator() {
         throw new RuntimeException("iterator: implementation incomplete");
     }
-    
-      //TODO: iterator must start at root
+
+    //TODO: iterator must start at root
     // Implement the two iterator methods above by implementing the two iterator classes below.
     // Iterator that vists the min to max strings in order
     // Note should not rebalance the tree as ur traversing
     public class SnapShotIterator implements Iterator<String> {
-    	private Cell ssi;
-    	int i = 0;
-    	Cell arr[]  = new Cell[count];
-    	
+
+        private Cell ssi;
+        int i = 0;
+        Cell arr[] = new Cell[count];
+
         /*
          * Iterator now starts at the minimum value of the tree
          */
         public SnapShotIterator(Cell root) {
-        	ssi = root;
-        	
-        	if(ssi.key() != null && hasNext()) {
-            	while(hasNext()) {
-            		arr[i] = ssi; // store the cell into the array 
-            		ssi = ssi.lt;
-            		i++;
-            		
-            	}
-        	}
+            ssi = root;
+
+            if (ssi.key() != null && hasNext()) {
+                while (hasNext()) {
+                    arr[i] = ssi; // store the cell into the array
+                    ssi = ssi.lt;
+                    i++;
+
+                }
+            }
             //throw new RuntimeException("iterator: implementation incomplete");
         }
 
         // You need to implement the following two methods here.
         public boolean hasNext() {
-        	return (ssi.lt.key() != null || ssi.rt.key() != null) ;
-           // throw new RuntimeException("hasNext: implementation incomplete");
+            return (ssi.lt.key() != null || ssi.rt.key() != null);
+            // throw new RuntimeException("hasNext: implementation incomplete");
         }
 
         // Next goes from min to max in that order
         public String next() {
-        	// Traverse up to parent and then down to right tree of parent
-        	
-        	// TODO: use count to find length of all nodes added ie count
-        	//  also use array to store the pointers of visited nodes ie to move back up to parent(move up ancestry) 
-        	// Now at the bottom of the tree
-        	Cell temp = ssi;
-        	if(!hasNext()) { // at the end of the sub tree with no sub trees to go down to 
-        		ssi = arr[i];
-        		
-        	}
-        	
-        	
-        	throw new RuntimeException("Reached end of tree, no child to go to");
+            // Traverse up to parent and then down to right tree of parent
+
+            // TODO: use count to find length of all nodes added ie count
+            //  also use array to store the pointers of visited nodes ie to move back up to parent(move up ancestry)
+            // Now at the bottom of the tree
+            Cell temp = ssi;
+            if (!hasNext()) { // at the end of the sub tree with no sub trees to go down to
+                ssi = arr[i];
+
+            }
+
+
+            throw new RuntimeException("Reached end of tree, no child to go to");
         }
 
         // You should leave the remove method as unsupported.
