@@ -7,7 +7,10 @@ import java.util.Iterator;
  */
 public class SplayFC implements ISplayFC {
 
-    public Cell top;  // Stores the current root cell
+    /**
+     * the current root cell
+     */
+    public Cell top;
     /**
      * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
      * that will be in a SplayFC tree.  Splaying on these is sometimes useful.
@@ -50,9 +53,16 @@ public class SplayFC implements ISplayFC {
         top = c;
     }
 
-    /*
-     * See ISplayFC.  You must not modify this method.
-     */
+    /**
+	 * Generates a string representation of a SplayFC tree, formatted to show the
+	 * tree structure starting from the root node on the left, going to the leaves
+	 * on the right.
+	 * <p>
+	 *
+	 * You should not modify this method, since it will be used during testing.
+	 *
+	 * @return The string representation of the tree.
+	 */
     public String toString() {
         if (top == null) {
             return "[]\n";
@@ -226,11 +236,30 @@ public class SplayFC implements ISplayFC {
         }
     }
 
-    // Implement the rest of the methods of SplayFC below, along with any private methods you use.
+    /**
+	 * Remove a specified string from the splay tree.
+	 * This should be done by splaying on k and then splaying on the resulting
+	 * left subtree to bring its maximum element to its root.  This is then
+	 * rearranged along with the right subtree.
+	 *
+	 * There are special cases for when the key is not found and when particular
+	 * trees are null - you'll need to figure these out.
+	 *
+	 * @param k The string to remove.
+	 * @return true if k is was the splay tree.
+	 */
     public boolean remove(String k) {
         throw new RuntimeException("remove: implementation incomplete");
     }
 
+    /**
+	 * Check whether a string k appears as a key in the splay tree.  This should
+	 * be done via splaying, with the tree being updated to the result of splaying
+	 * regardless of whether the key is found.
+	 *
+	 * @param k  The key string to look for.
+	 * @return true if k is included in the splay tree.
+	 */
     // TODO
     public boolean contains(String k) {
         // Need iterator at the start of the tree/ root
@@ -238,27 +267,93 @@ public class SplayFC implements ISplayFC {
         throw new RuntimeException("contains: implementation incomplete");
     }
 
+    /**
+	 * Extract a splay tree that contains all keys in the current tree that are
+	 * strictly less than k.  This should be done via splaying on k, updating
+	 * this SplayFC tree, as well as returning an extracted tree with as much
+	 * sharing of cells as possible.
+	 *
+	 * @param k The minimum string key to include.
+	 * @return The exracted splay tree.
+	 */
     // TODO
     public SplayFC headSet(String k) {
         throw new RuntimeException("headSet: implementation incomplete");
     }
 
+    /**
+	 * Extract a splay tree that contains all keys in the current tree that are
+	 * greater than or equal to k.  This should be done via splaying on k, updating
+	 * this SplayFC tree, as well as returning an extracted tree with as much
+	 * sharing of cells as possible.
+	 *
+	 * @param k  The string below which keys should be included.
+	 * @return The extacted splay tree.
+	 */
     public SplayFC tailSet(String k) {
         throw new RuntimeException("tailSet: implementation incomplete");
     }
 
+    /**
+	 * Extract a splay tree that contains all keys in the current tree that are
+	 * greater than or equal to k1 and strictly less than k2.
+	 *
+	 * @param k1  The minimum string key to include.
+	 * @param k2  The string below which keys should be included.
+	 * @return The extracted splay tree.
+	 */
     public SplayFC subSet(String k1, String k2) {
         throw new RuntimeException("subSet: implementation incomplete");
     }
 
+    /**
+	 * Create a new SplayFC object that contains the same strings as this object.
+	 * This method must be fast. (SplayFC = Splay Tree with Fast Cloning) In
+	 * particular, cells should be shared with the original SplayFC object rather
+	 * than being copied.
+	 *
+	 * @return The created SplayFC object.
+	 */
     public SplayFC clone() {
         throw new RuntimeException("clone: implementation incomplete");
     }
 
+    /**
+	 * Create an iterator that visits the strings in this SplayFC tree in order.
+	 * If the tree is updated while the iterator is active, the iterator should
+	 * still visit the strings that were in the tree when the iterator was
+	 * created.
+	 *
+	 * The iterator's remove method should always throw
+	 * UnsupportedOperationException
+	 *
+	 * The use of this iterator should not result in rebalancing of the original
+	 * SplayFC tree.
+	 *
+	 * @return The iterator object.
+	 *
+	 */
     public Iterator<String> snapShotIterator() {
         return new SnapShotIterator(getTop());
     }
 
+    /**
+	 * Create an iterator that visits the strings in this SplayFC tree in order.
+	 * If the tree is updated while the iterator is active, the iterator should be
+	 * affected by the update. Specifically, each call to next should visit the
+	 * least element currently in the tree that is greater than the previously
+	 * returned elements, and the hasNext method should be consistent with this.
+	 *
+	 * The iterator's remove operation should be implemented. The iterator's next
+	 * method should throw java.util.ConcurrentModificationException if remove
+	 * has been called on the SplayFC tree since the most recent call to hasNext.
+	 *
+	 * The use of this iterator should not result in rebalancing of the original
+	 * SplayFC tree.
+	 *
+	 * @return The iterator object.
+	 *
+	 */
     public Iterator<String> updatingIterator() {
         throw new RuntimeException("iterator: implementation incomplete");
     }
