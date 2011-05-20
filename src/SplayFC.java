@@ -17,18 +17,35 @@ public class SplayFC implements ISplayFC {
     //Private helper count, used to count number of items in the tree
     private int count = 0;
 
+    /**
+     * Constructs a SplayFC with a null root.
+     */
     public SplayFC() {
         top = null;
     }
 
+    /**
+     * Constructs a SplayFC with the specified cell as root.
+     * @param c the cell to be made root
+     */
     public SplayFC(Cell c) {
         top = c;
     }
 
+    /**
+     * Get the top cell of the SplayFC tree.
+     *
+     * @return The top cell
+     */
     public Cell getTop() {
         return top;
     }
 
+    /**
+     * Set the top cell of the SplayFC tree.
+     *
+     * @param c The new top cell.
+     */
     public void setTop(Cell c) {
         top = c;
     }
@@ -61,6 +78,26 @@ public class SplayFC implements ISplayFC {
         return count;
     }
 
+    /**
+     * Splay the tree with root c to build a new tree that has the same keys but
+     * has a node that is "nearest" to k at the root. Here "nearest" means the new
+     * root node's key is equal to k if k is in the tree, otherwise there must be
+     * no other key in the tree in between k and the root node's key. (In the
+     * latter case there may be two "nearest" nodes - one less than k and one
+     * greater than k).
+     *
+     * Splaying is done by returning a new tree rather than modifying the input
+     * tree. The returned tree should generally share some of the existing cells
+     * from the input tree, and should create new cells for the remainder.
+     *
+     * The exact scheme for splaying that must be implemented is described in the
+     * project specification.
+     *
+     * @param c The cell at root of the tree to splay.
+     * @param k The key for which a "nearest" key from the tree is moved to the
+     *          root.
+     * @return The root cell of the new tree.
+     */
     public Cell splay(Cell c, String k) {
         if (c == null) {
             throw new NullPointerException("splay requires a non-null Cell");
@@ -69,15 +106,15 @@ public class SplayFC implements ISplayFC {
         int compareToCKey = k.compareTo(c.key());
 
         //The following section compares the current cell c.
-        if (compareToCKey < 0 && c.lt != null) {                         // Search left
+        if (compareToCKey < 0 && c.lt != null) { // Search left
             int compareToLtKey = k.compareTo(c.lt.key());
 
-            if (compareToLtKey < 0 && c.lt.lt != null) {             // left zig-zig step
-                Cell ll = splay(c.lt.lt, k);                     // Search recursively
-                Cell newRR = cell(c.key(), c.lt.rt, c.rt);                // Rearrange
+            if (compareToLtKey < 0 && c.lt.lt != null) { // left zig-zig step
+                Cell ll = splay(c.lt.lt, k); // Search recursively
+                Cell newRR = cell(c.key(), c.lt.rt, c.rt); // Rearrange
                 return cell(ll.key(), ll.lt, cell(c.lt.key(), ll.rt, newRR));
 
-            } else if (compareToLtKey > 0 && c.lt.rt != null) {    // left zig-zag step
+            } else if (compareToLtKey > 0 && c.lt.rt != null) { // left zig-zag step
 
                 Cell lr = splay(c.lt.rt, k);
                 // rearranged parent
@@ -89,15 +126,15 @@ public class SplayFC implements ISplayFC {
             {
                 return cell(c.lt.key(), c.lt.lt, cell(c.key(), c.lt.rt, c.rt));
             }
-        } else if (compareToCKey > 0 && c.rt != null) {                   // Search right
+        } else if (compareToCKey > 0 && c.rt != null) { // Search right
             int compareToRtKey = k.compareTo(c.rt.key());
 
-            if (compareToRtKey > 0 && c.rt.rt != null) {             // right zig-zig step
-                Cell rr = splay(c.rt.rt, k);                     // Search recursively
-                Cell newRR = cell(c.key(), c.lt, c.rt.lt);                // Rearrange
+            if (compareToRtKey > 0 && c.rt.rt != null) { // right zig-zig step
+                Cell rr = splay(c.rt.rt, k); // Search recursively
+                Cell newRR = cell(c.key(), c.lt, c.rt.lt); // Rearrange
                 return cell(rr.key(), cell(c.rt.key(), newRR, rr.lt), rr.rt);
 
-            } else if (compareToRtKey > 0 && c.rt.lt != null) {    // right zig-zag step
+            } else if (compareToRtKey > 0 && c.rt.lt != null) { // right zig-zag step
 
                 Cell rl = splay(c.rt.lt, k);
                 // rearranged parent
@@ -115,26 +152,77 @@ public class SplayFC implements ISplayFC {
         }
     }
 
+    /**
+     * Insert a specified string key into the splay tree. If the tree is empty,
+     * create a new cell. Otherwise, splay on k and if k is not found replace the
+     * resulting root cell, with key h, by two new cells such that k is the new
+     * root and h is appropriately in either the left or right child.
+     * <p>
+     *
+     * So, e.g., if h < k the top of the tree is modified as follows (after
+     * splaying on k):
+     *
+     * <pre>
+     * {@code .
+     *                            /-LTREE
+     *    /-LTREE              /-h
+     *   h         =>        -k
+     *    \-RTREE              \-RTREE
+     * }
+     * </pre>
+     *
+     * Note that this method needs to call the "splay" method, so the splay
+     * method should be written first.
+     *
+     * @param k
+     *          The string key to insert.
+     * @return true if k was not already in the splay tree.
+     */
     public boolean add(String k) {
         if (top == null) {
             top = cell(k, null, null);
             count++;
             return true;
         }
-        Cell s = splay(top, k); // now k is the root, and the tree has been rebalanced/sorted, or closest to k, 
-        // ie the node with lt that is less than k and rt that is greater to k
-        if (s.key() == k) {
-            return true; // there is a key s that already contains string k
+        Cell s = splay(top, k);
+        if (s.key().equals(k)) {
+            return false;
         } else {
-            if (k.compareTo(s.lt.key()) < 0 && k.compareTo(s.key()) > 0) {
-                Cell sk = cell(k, s.lt, s); // creates a new cell node, where its between left tree of s and s
-                count++;
-                return true;
-            } else {
-                Cell sk = cell(k, s, s.rt); // creates a new cell node, where its between s and right tree of s
+            if (s.lt == null && k.compareTo(s.key()) < 0) {
+                Cell l = cell(k, null, null);
+                Cell newS = cell(s.key(), l, s.rt);
+                setTop(newS);
+                setTop(splay(top, k));
                 count++;
                 return true;
             }
+            if (s.rt == null && k.compareTo(s.key()) > 0) {
+                Cell r = cell(k, null, null);
+                Cell newS = cell(s.key(), s.lt, r);
+                setTop(newS);
+                setTop(splay(top, k));
+                count++;
+                return true;
+            }
+
+            if (k.compareTo(s.lt.key()) > 0 && k.compareTo(s.key()) < 0) {
+                // for when k is between left tree of s and s
+                Cell newS = cell(s.key(), null, s.rt);
+                Cell newTop = cell(k, s.lt, newS);
+                setTop(newTop);
+                setTop(splay(top, k));
+                count++;
+                return true;
+            } else {
+                // for when k is between right tree of s and s
+                Cell newS = cell(s.key(), s.lt, null);
+                Cell newTop = cell(k, newS, s.rt);
+                setTop(newTop);
+                setTop(splay(top, k));
+                count++;
+                return true;
+            }
+
         }
     }
 
