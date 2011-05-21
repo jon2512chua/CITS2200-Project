@@ -17,9 +17,23 @@ public class SplayFC implements ISplayFC {
      */
     final static String STRING_MIN = "";
     final static String STRING_MAX = Character.toString(Character.MAX_VALUE);
-    //Private helper count, used to count number of items in the tree
-    private int count = 0;
 
+    /* ------------------ Begin private helper variables. ------------------ */
+    /**
+     * private helper count, used to count number of items in the tree
+     */
+    private int count = 0;
+    /**
+     * private helper variable for snapShotIterator used to store all the
+     * strings in the tree
+     */
+    private String snaparr[];
+    /**
+     * index for snaparr[]
+     */
+    private int i = 0;
+
+    /* ------------------ End private helper variables. ------------------ */
     /**
      * Constructs a SplayFC with a null root.
      */
@@ -82,12 +96,27 @@ public class SplayFC implements ISplayFC {
         return new Cell(k, l, r);
     }
 
-    // Private helper method
-    // Find the number of valid nodes in the tree, ie number of contents in the tree
-    private int num() {
-        return count;
+    /* ------------------- Begin private helper methods. ------------------- */
+    /**
+     * a private helper method that recursively collects all keys into an array
+     */
+    private void recursive(Cell c) {
+        while (c.key() != null) {
+            snaparr[i] = c.key();
+            if (c.lt != null) {
+                Cell l = c.lt;
+                i++;
+                recursive(l);
+            }
+            if (c.rt != null) {
+                Cell r = c.rt;
+                i++;
+                recursive(r);
+            }
+        }
     }
 
+    /* -------------------- End private helper methods. -------------------- */
     /**
      * Splay the tree with root c to build a new tree that has the same keys but
      * has a node that is "nearest" to k at the root. Here "nearest" means the new
@@ -365,7 +394,6 @@ public class SplayFC implements ISplayFC {
     public class SnapShotIterator implements Iterator<String> {
 
         private Cell ssi;
-        int i = 0;
         Cell arr[] = new Cell[count];
 
         /*
@@ -373,38 +401,23 @@ public class SplayFC implements ISplayFC {
          */
         public SnapShotIterator(Cell root) {
             ssi = root;
-
-            if (ssi.key() != null && hasNext()) {
-                while (hasNext()) {
-                    arr[i] = ssi; // store the cell into the array
-                    ssi = ssi.lt;
-                    i++;
-
-                }
-            }
+            recursive(ssi); // traverses the tree and fills the array
+            i = -1;
             //throw new RuntimeException("iterator: implementation incomplete");
         }
 
         // You need to implement the following two methods here.
         public boolean hasNext() {
-            return (ssi.lt.key() != null || ssi.rt.key() != null);
+            return snaparr[i + 1] != null;
             // throw new RuntimeException("hasNext: implementation incomplete");
         }
 
         // Next goes from min to max in that order
         public String next() {
-            // Traverse up to parent and then down to right tree of parent
-
-            // TODO: use count to find length of all nodes added ie count
-            //  also use array to store the pointers of visited nodes ie to move back up to parent(move up ancestry)
-            // Now at the bottom of the tree
-            Cell temp = ssi;
-            if (!hasNext()) { // at the end of the sub tree with no sub trees to go down to
-                ssi = arr[i];
-
+            if (hasNext()) {
+                i++;
+                return snaparr[i];
             }
-
-
             throw new RuntimeException("Reached end of tree, no child to go to");
         }
 
