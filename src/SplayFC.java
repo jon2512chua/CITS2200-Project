@@ -12,13 +12,14 @@ public class SplayFC implements ISplayFC {
      */
     public Cell top;
     /**
-     * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
+     * Strings that are below (STRING_MIN) and above (STRING_MAX) all the words
      * that will be in a SplayFC tree.  Splaying on these is sometimes useful.
      */
     final static String STRING_MIN = "";
     final static String STRING_MAX = Character.toString(Character.MAX_VALUE);
     //Private helper count, used to count number of items in the tree
     private int count = 0;
+    private Cell snapit = top; // iterator with root at the top
 
     /**
      * Constructs a SplayFC with a null root.
@@ -83,9 +84,15 @@ public class SplayFC implements ISplayFC {
     }
 
     // Private helper method
+<<<<<<< HEAD
     // Find the number of valid nodes in the tree, ie number of contents in the tree
     private int num() {
         return count;
+=======
+    // Fills the array with the contents of the tree in order from min to max
+    private String snap() {
+    	while()
+>>>>>>> origin/master
     }
 
     /**
@@ -126,16 +133,15 @@ public class SplayFC implements ISplayFC {
 
             } else if (compareToLtKey > 0 && c.lt.rt != null) { // left zig-zag step
 
-                Cell lr = splay(c.lt.rt, k);
-                // rearranged parent
-                Cell newRRP = cell(c.lt.key(), c.lt.lt, c.lt.rt.lt);
-                // rearranged grandparent
-                Cell newRRG = cell(c.key(), c.lt.rt.rt, c.rt);
-                return cell(lr.key(), newRRP, newRRG);
+                // Replace this with code similar to the zig-zig step above, but
+                // following the zig-zag case in the specification.
+                throw new RuntimeException("splay: implementation incomplete");
+
             } else // left zig step
             {
                 return cell(c.lt.key(), c.lt.lt, cell(c.key(), c.lt.rt, c.rt));
             }
+<<<<<<< HEAD
         } else if (compareToCKey > 0 && c.rt != null) { // Search right
             int compareToRtKey = k.compareTo(c.rt.key());
 
@@ -143,19 +149,25 @@ public class SplayFC implements ISplayFC {
                 Cell rr = splay(c.rt.rt, k); // Search recursively
                 Cell newRR = cell(c.key(), c.lt, c.rt.lt); // Rearrange
                 return cell(rr.key(), cell(c.rt.key(), newRR, rr.lt), rr.rt);
+=======
+        } else if (compareToCKey < 0 && c.rt != null) {                   // Search right
+            int compareToRtKey = k.compareTo(c.rt.key());
+
+            if (compareToRtKey < 0 && c.rt.rt != null) {             // right zig-zig step
+                Cell rr = splay(c.rt.rt, k);                     // Search recursively
+                Cell newLL = cell(c.key(), c.rt.lt, c.lt);                // Rearrange
+                return cell(rr.key(), rr.rt, cell(c.rt.key(), rr.lt, newLL));
+>>>>>>> origin/master
 
             } else if (compareToRtKey > 0 && c.rt.lt != null) { // right zig-zag step
 
-                Cell rl = splay(c.rt.lt, k);
-                // rearranged parent
-                Cell newRRP = cell(c.rt.key(), c.rt.lt.rt, c.rt.rt);
-                // rearranged grandparent
-                Cell newRRG = cell(c.key(), c.lt, c.rt.lt.lt);
-                return cell(rl.key(), newRRG, newRRP);
+                // Replace this with code similar to the zig-zig step above, but
+                // following the zig-zag case in the specification.
+                throw new RuntimeException("splay: implementation incomplete");
 
             } else // right zig step
             {
-                return cell(c.rt.key(), cell(c.key(), c.lt, c.rt.lt), c.rt.rt);
+                return cell(c.rt.key(), c.rt.rt, cell(c.key(), c.rt.lt, c.lt));
             }
         } else {
             return c;  // Special cases 1 and 2 in the specification
@@ -198,6 +210,7 @@ public class SplayFC implements ISplayFC {
         if (s.key().equals(k)) {
             return false;
         } else {
+<<<<<<< HEAD
             if (s.lt == null && k.compareTo(s.key()) < 0) {
                 Cell l = cell(k, null, null);
                 Cell newS = cell(s.key(), l, s.rt);
@@ -233,6 +246,17 @@ public class SplayFC implements ISplayFC {
                 return true;
             }
 
+=======
+	        if(k.compareTo(s.lt.key()) < 0 && k.compareTo(s.key()) > 0 ) {
+	        	Cell sk = cell(k, s.lt, s); // creates a new cell node, where its between left tree of s and s
+	        	count ++;
+	        	return true;
+	        } else {
+	        	Cell sk = cell(k, s, s.rt); // creates a new cell node, where its between s and right tree of s
+	        	count ++;
+	        	return true;
+	        }
+>>>>>>> origin/master
         }
     }
 
@@ -318,6 +342,7 @@ public class SplayFC implements ISplayFC {
         throw new RuntimeException("clone: implementation incomplete");
     }
 
+<<<<<<< HEAD
     /**
      * Create an iterator that visits the strings in this SplayFC tree in order.
      * If the tree is updated while the iterator is active, the iterator should
@@ -336,6 +361,11 @@ public class SplayFC implements ISplayFC {
     public Iterator<String> snapShotIterator() {
         return new SnapShotIterator(getTop());
     }
+=======
+    public Iterator<String> snapShotIterator() { 
+    	return new SnapShotIterator(getTop());
+    	}
+>>>>>>> origin/master
 
     /**
      * Create an iterator that visits the strings in this SplayFC tree in order.
@@ -372,6 +402,7 @@ public class SplayFC implements ISplayFC {
          * Iterator now starts at the minimum value of the tree
          */
         public SnapShotIterator(Cell root) {
+<<<<<<< HEAD
             ssi = root;
 
             if (ssi.key() != null && hasNext()) {
@@ -382,6 +413,17 @@ public class SplayFC implements ISplayFC {
 
                 }
             }
+=======
+        	ssi = root;
+        	
+        	if(ssi.key() != null && hasNext()) {
+            	while(hasNext()) {
+            		arr[i] = ssi; // store the cell into the array 
+            		ssi = ssi.lt;
+            		i++;
+            	}
+        	}
+>>>>>>> origin/master
             //throw new RuntimeException("iterator: implementation incomplete");
         }
 
@@ -393,6 +435,7 @@ public class SplayFC implements ISplayFC {
 
         // Next goes from min to max in that order
         public String next() {
+<<<<<<< HEAD
             // Traverse up to parent and then down to right tree of parent
 
             // TODO: use count to find length of all nodes added ie count
@@ -406,6 +449,24 @@ public class SplayFC implements ISplayFC {
 
 
             throw new RuntimeException("Reached end of tree, no child to go to");
+=======
+        	// Traverse up to parent and then down to right tree of parent
+        	
+        	// TODO: use count to find length of all nodes added ie count
+        	//  also use array to store the pointers of visited nodes ie to move back up to parent(move up ancestry) 
+        	// Now at the bottom of the tree
+        	
+        	if(!hasNext()) { // at the end of the sub tree with no sub trees to go down to 
+        		Cell temp = ssi;
+        		ssi = arr[i-1];
+        		return temp.key(); // return the parent
+        	}
+        	// Up at parent 
+        	
+        	
+        	
+        	throw new RuntimeException("Reached end of tree, no child to go to");
+>>>>>>> origin/master
         }
 
         // You should leave the remove method as unsupported.
