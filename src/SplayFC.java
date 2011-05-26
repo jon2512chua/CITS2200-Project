@@ -244,7 +244,7 @@ public class SplayFC implements ISplayFC {
                 return true;
             }
 
-            if (k.compareTo(s.lt.key()) > 0 && k.compareTo(s.key()) < 0) {
+            if (s.lt != null && k.compareTo(s.lt.key()) > 0 && k.compareTo(s.key()) < 0) {
                 // for when k is between left tree of s and s
                 Cell newS = cell(s.key(), null, s.rt);
                 Cell newTop = cell(k, s.lt, newS);
@@ -253,7 +253,7 @@ public class SplayFC implements ISplayFC {
                 count++;
                 return true;
             }
-            if (k.compareTo(s.rt.key()) < 0 && k.compareTo(s.key()) > 0) {
+            if (s.rt != null && k.compareTo(s.rt.key()) < 0 && k.compareTo(s.key()) > 0) {
                 // for when k is between right tree of s and s
                 Cell newS = cell(s.key(), s.lt, null);
                 Cell newTop = cell(k, newS, s.rt);
