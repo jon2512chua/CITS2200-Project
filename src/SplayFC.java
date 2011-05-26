@@ -252,7 +252,8 @@ public class SplayFC implements ISplayFC {
                 setTop(splay(top, k));
                 count++;
                 return true;
-            } else {
+            }
+            if (k.compareTo(s.rt.key()) < 0 && k.compareTo(s.key()) > 0) {
                 // for when k is between right tree of s and s
                 Cell newS = cell(s.key(), s.lt, null);
                 Cell newTop = cell(k, newS, s.rt);
@@ -263,6 +264,8 @@ public class SplayFC implements ISplayFC {
             }
 
         }
+        // whatever else happens that's not expected
+        return false;
     }
 
     /**
@@ -403,13 +406,11 @@ public class SplayFC implements ISplayFC {
             ssi = root;
             recursive(ssi); // traverses the tree and fills the array
             i = -1;
-            //throw new RuntimeException("iterator: implementation incomplete");
         }
 
         // You need to implement the following two methods here.
         public boolean hasNext() {
             return snaparr[i + 1] != null;
-            // throw new RuntimeException("hasNext: implementation incomplete");
         }
 
         // Next goes from min to max in that order
