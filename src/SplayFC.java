@@ -346,7 +346,24 @@ public class SplayFC implements ISplayFC {
      * @return The extracted splay tree.
      */
     public SplayFC subSet(String k1, String k2) {
-        throw new RuntimeException("subSet: implementation incomplete");
+        SplayFC treeClone;
+        treeClone = this.clone();
+        Iterator<String> ssi = treeClone.snapShotIterator();
+        splay(treeClone.getTop(), ssi.next()); // Lowest element now at root
+        Iterator<String> upi = treeClone.updatingIterator();
+        while (upi.next() != k1) {
+            upi.next();
+            upi.remove();
+        }
+        // Removed all elements from lowest till to k1
+        splay(treeClone.getTop(), k2);
+        Iterator<String> upi2 = treeClone.updatingIterator();
+        // upi.next(); // to move to the next element first....
+        while (upi.next() != null) {
+            upi2.next();
+            upi2.remove();
+        }
+        return treeClone;
     }
 
     /**
