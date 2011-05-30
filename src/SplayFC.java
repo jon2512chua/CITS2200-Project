@@ -1,5 +1,6 @@
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * An implementation of a splay tree of strings with fast cloning and subset extraction.
@@ -18,22 +19,6 @@ public class SplayFC implements ISplayFC {
     final static String STRING_MIN = "";
     final static String STRING_MAX = Character.toString(Character.MAX_VALUE);
 
-    /* ------------------ Begin private helper variables. ------------------ */
-    /**
-     * private helper count, used to count number of items in the tree
-     */
-    private int count = 0;
-    /**
-     * private helper variable for snapShotIterator used to store all the
-     * strings in the tree
-     */
-    private String snaparr[];
-    /**
-     * index for snaparr[]
-     */
-    private int i = 0;
-
-    /* ------------------ End private helper variables. ------------------ */
     /**
      * Constructs a SplayFC with a null root.
      */
@@ -96,27 +81,6 @@ public class SplayFC implements ISplayFC {
         return new Cell(k, l, r);
     }
 
-    /* ------------------- Begin private helper methods. ------------------- */
-    /**
-     * a private helper method that recursively collects all keys into an array
-     */
-    private void recursive(Cell c) {
-        while (c.key() != null) {
-            snaparr[i] = c.key();
-            if (c.lt != null) {
-                Cell l = c.lt;
-                i++;
-                recursive(l);
-            }
-            if (c.rt != null) {
-                Cell r = c.rt;
-                i++;
-                recursive(r);
-            }
-        }
-    }
-
-    /* -------------------- End private helper methods. -------------------- */
     /**
      * Splay the tree with root c to build a new tree that has the same keys but
      * has a node that is "nearest" to k at the root. Here "nearest" means the new
@@ -220,7 +184,6 @@ public class SplayFC implements ISplayFC {
     public boolean add(String k) {
         if (top == null) {
             top = cell(k, null, null);
-            count++;
             return true;
         }
         Cell s = splay(top, k);
@@ -232,7 +195,6 @@ public class SplayFC implements ISplayFC {
                 Cell newS = cell(s.key(), l, s.rt);
                 setTop(newS);
                 setTop(splay(top, k));
-                count++;
                 return true;
             }
             if (s.rt == null && k.compareTo(s.key()) > 0) {
@@ -240,7 +202,6 @@ public class SplayFC implements ISplayFC {
                 Cell newS = cell(s.key(), s.lt, r);
                 setTop(newS);
                 setTop(splay(top, k));
-                count++;
                 return true;
             }
 
@@ -250,7 +211,6 @@ public class SplayFC implements ISplayFC {
                 Cell newTop = cell(k, s.lt, newS);
                 setTop(newTop);
                 setTop(splay(top, k));
-                count++;
                 return true;
             }
             if (s.rt != null && k.compareTo(s.rt.key()) < 0 && k.compareTo(s.key()) > 0) {
@@ -259,7 +219,6 @@ public class SplayFC implements ISplayFC {
                 Cell newTop = cell(k, newS, s.rt);
                 setTop(newTop);
                 setTop(splay(top, k));
-                count++;
                 return true;
             }
 
@@ -347,7 +306,7 @@ public class SplayFC implements ISplayFC {
      * @return The created SplayFC object.
      */
     public SplayFC clone() {
-        throw new RuntimeException("clone: implementation incomplete");
+        return this;
     }
 
     /**
@@ -390,36 +349,33 @@ public class SplayFC implements ISplayFC {
         throw new RuntimeException("iterator: implementation incomplete");
     }
 
-    //TODO: iterator must start at root
     // Implement the two iterator methods above by implementing the two iterator classes below.
-    // Iterator that vists the min to max strings in order
+    // Iterator that visits the min to max strings in order
     // Note should not rebalance the tree as ur traversing
     public class SnapShotIterator implements Iterator<String> {
 
-        private Cell ssi;
-        Cell arr[] = new Cell[count];
+        private SplayFC ssi;
+        private Cell c;
 
-        /*
-         * Iterator now starts at the minimum value of the tree
-         */
         public SnapShotIterator(Cell root) {
-            ssi = root;
-            recursive(ssi); // traverses the tree and fills the array
-            i = -1;
+            ssi = ssi.clone();
+            c = cell(null, null, ssi.getTop());
         }
 
-        // You need to implement the following two methods here.
         public boolean hasNext() {
-            return snaparr[i + 1] != null;
+            return (c.rt != null);
         }
 
-        // Next goes from min to max in that order
-        public String next() {
+        public String next() throws NoSuchElementException {
             if (hasNext()) {
-                i++;
-                return snaparr[i];
+                c = c.rt;
+                String temp = c.key();
+                ssi.remove(c.key());
+                ssi.splay(ssi.getTop(), "");
+                return temp;
+            } else {
+                throw new NoSuchElementException("Reached end of tree, no child to go to.");
             }
-            throw new RuntimeException("Reached end of tree, no child to go to");
         }
 
         // You should leave the remove method as unsupported.
