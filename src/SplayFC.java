@@ -285,11 +285,9 @@ public class SplayFC implements ISplayFC {
      * @param k  The key string to look for.
      * @return true if k is included in the splay tree.
      */
-    // TODO
     public boolean contains(String k) {
-        // Need iterator at the start of the tree/ root
-
-        throw new RuntimeException("contains: implementation incomplete");
+        splay(top, k);
+    	return getTop().key().equals(k);
     }
 
     /**
