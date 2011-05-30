@@ -301,7 +301,17 @@ public class SplayFC implements ISplayFC {
      */
     // TODO
     public SplayFC headSet(String k) {
-        throw new RuntimeException("headSet: implementation incomplete");
+        SplayFC treeClone;
+    	splay(this.getTop(), k);
+    	treeClone = this.clone();
+    	//treeClone.splay(treeClone.getTop(), k); // cloned tree is now ordered with k at root
+    	Iterator<String> upi = treeClone.updatingIterator(); // iterator of the clone
+    	while(upi.next() != null) { // while it does not reach the end of tree
+    		upi.next(); //must return the element first before deleting it
+    		upi.remove();
+    	}
+    	// Once removal of the right sub tree is done
+    	return treeClone;
     }
 
     /**
