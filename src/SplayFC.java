@@ -240,7 +240,41 @@ public class SplayFC implements ISplayFC {
      * @return true if k is was the splay tree.
      */
     public boolean remove(String k) {
-        throw new RuntimeException("remove: implementation incomplete");
+        // base case of when tree is empty
+        if (getTop() == null) {
+            return false;
+        } else { // When tree is not empty
+            // case where k is found in the tree
+            if (contains(k)) {
+                // splay the highest element in the left sub tree
+                // Call snap shot iterator to return the highest element of the left sub tree, by finding the root in the ssi
+                Iterator<String> ssi = this.snapShotIterator();
+                String previous = null;
+                while (ssi.hasNext()) { // Question will it ever reach to null...??
+                    String temp = ssi.next();
+                    if (!temp.equals(getTop().key())) {
+                        previous = temp;
+                    } else {
+                        break;
+                    }
+                }
+                // highest element of left sub tree is now in previous
+                // Note: Need to use update iterator to traverse on right subtree, to find string K which is in right sub tree, then call
+                // Iterator remove on that cell!
+                splay(getTop(), previous);
+                // Now previous is at the root, and string K is in the right sub tree.
+                Iterator<String> upi = this.updatingIterator();
+                // TODO: need to start the upi in the right sub tree of the root?
+                // Or update iterator starts at root and iterates to the right anywaz
+                // No to sure about the while loop
+                while (!upi.next().equals(k)) {
+                }
+                upi.next();
+                upi.remove();  // removes Cell that contains string K
+                return true;
+            }
+            return false;
+        }
     }
 
     /**
