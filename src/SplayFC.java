@@ -244,36 +244,21 @@ public class SplayFC implements ISplayFC {
         if (getTop() == null) {
             return false;
         } else { // When tree is not empty
-            // case where k is found in the tree
             if (contains(k)) {
-                // splay the highest element in the left sub tree
-                // Call snap shot iterator to return the highest element of the left sub tree, by finding the root in the ssi
-                Iterator<String> ssi = this.snapShotIterator();
-                String previous = null;
-                while (ssi.hasNext()) { // Question will it ever reach to null...??
-                    String temp = ssi.next();
-                    if (!temp.equals(getTop().key())) {
-                        previous = temp;
-                    } else {
-                        break;
-                    }
+                setTop(splay(top, k));
+                if (top.lt == null) {
+                    Cell newTop = cell(top.rt.key(), top.rt.lt, top.rt.rt);
+                    setTop(newTop);
+                    return true;
+                } else {
+                    Cell l = splay(top.lt, STRING_MAX);
+                    Cell newTop = cell(l.key(), l.lt, top.rt);
+                    setTop(newTop);
+                    return true;
                 }
-                // highest element of left sub tree is now in previous
-                // Note: Need to use update iterator to traverse on right subtree, to find string K which is in right sub tree, then call
-                // Iterator remove on that cell!
-                splay(getTop(), previous);
-                // Now previous is at the root, and string K is in the right sub tree.
-                Iterator<String> upi = this.updatingIterator();
-                // TODO: need to start the upi in the right sub tree of the root?
-                // Or update iterator starts at root and iterates to the right anywaz
-                // No to sure about the while loop
-                while (!upi.next().equals(k)) {
-                }
-                upi.next();
-                upi.remove();  // removes Cell that contains string K
-                return true;
+            } else {
+                return false;
             }
-            return false;
         }
     }
 
@@ -286,7 +271,7 @@ public class SplayFC implements ISplayFC {
      * @return true if k is included in the splay tree.
      */
     public boolean contains(String k) {
-        splay(top, k);
+        setTop(splay(top, k));
         return getTop().key().equals(k);
     }
 
@@ -296,10 +281,9 @@ public class SplayFC implements ISplayFC {
      * this SplayFC tree, as well as returning an extracted tree with as much
      * sharing of cells as possible.
      *
-     * @param k The minimum string key to include.
-     * @return The exracted splay tree.
+     * @param k  The string below which keys should be included.
+     * @return The extracted splay tree.
      */
-    // TODO
     public SplayFC headSet(String k) {
         SplayFC treeClone;
         splay(this.getTop(), k);
@@ -320,8 +304,8 @@ public class SplayFC implements ISplayFC {
      * this SplayFC tree, as well as returning an extracted tree with as much
      * sharing of cells as possible.
      *
-     * @param k  The string below which keys should be included.
-     * @return The extacted splay tree.
+     * @param k The minimum string key to include.
+     * @return The extracted splay tree.
      */
     public SplayFC tailSet(String k) {
         SplayFC treeClone;
@@ -330,7 +314,7 @@ public class SplayFC implements ISplayFC {
         Iterator<String> ssi = treeClone.snapShotIterator();
         splay(treeClone.getTop(), ssi.next()); // ssi,next returns the lowest element in tree
         Iterator<String> upi = treeClone.updatingIterator(); // upi is now at the root(lowest element)
-        while (upi.next() != k) {
+        while (!upi.next().equals(k)) {
             upi.next();
             upi.remove();
         }
@@ -351,7 +335,7 @@ public class SplayFC implements ISplayFC {
         Iterator<String> ssi = treeClone.snapShotIterator();
         splay(treeClone.getTop(), ssi.next()); // Lowest element now at root
         Iterator<String> upi = treeClone.updatingIterator();
-        while (upi.next() != k1) {
+        while (!upi.next().equals(k1)) {
             upi.next();
             upi.remove();
         }
@@ -375,7 +359,8 @@ public class SplayFC implements ISplayFC {
      * @return The created SplayFC object.
      */
     public SplayFC clone() {
-        return this;
+        SplayFC newSplayFC = this;
+        return newSplayFC;
     }
 
     /**
@@ -394,7 +379,7 @@ public class SplayFC implements ISplayFC {
      *
      */
     public Iterator<String> snapShotIterator() {
-        return new SnapShotIterator(getTop());
+        return new SnapShotIterator(this);
     }
 
     /**
@@ -426,8 +411,9 @@ public class SplayFC implements ISplayFC {
         private SplayFC ssi;
         private Cell c;
 
-        public SnapShotIterator(Cell root) {
-            ssi = ssi.clone();
+        public SnapShotIterator(SplayFC sfc) {
+            ssi = sfc.clone();
+            ssi.setTop(ssi.splay(ssi.getTop(), STRING_MIN));
             c = cell(null, null, ssi.getTop());
         }
 
@@ -440,7 +426,7 @@ public class SplayFC implements ISplayFC {
                 c = c.rt;
                 String temp = c.key();
                 ssi.remove(c.key());
-                ssi.splay(ssi.getTop(), "");
+                ssi.splay(ssi.getTop(), STRING_MIN);
                 return temp;
             } else {
                 throw new NoSuchElementException("Reached end of tree, no child to go to.");
