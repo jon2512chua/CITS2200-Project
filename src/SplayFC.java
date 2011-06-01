@@ -246,8 +246,15 @@ public class SplayFC implements ISplayFC {
         } else { // When tree is not empty
             if (contains(k)) {
                 setTop(splay(top, k));
-                if (top.lt == null) {
+                if ((top.lt == null) && (top.rt == null)) {
+                    setTop(null);
+                    return true;
+                } else if (top.lt == null) {
                     Cell newTop = cell(top.rt.key(), top.rt.lt, top.rt.rt);
+                    setTop(newTop);
+                    return true;
+                } else if (top.rt == null) {
+                    Cell newTop = cell(top.lt.key(), top.lt.lt, top.lt.rt);
                     setTop(newTop);
                     return true;
                 } else {
@@ -417,6 +424,13 @@ public class SplayFC implements ISplayFC {
             c = cell(null, null, ssi.getTop());
         }
 
+        public String toString() {
+            if (ssi.getTop() == null) {
+                return "[]\n";
+            }
+            return ssi.getTop().toString("", "   ", "   ", " -");
+        }
+
         public boolean hasNext() {
             return (c.rt != null);
         }
@@ -426,7 +440,12 @@ public class SplayFC implements ISplayFC {
                 c = c.rt;
                 String temp = c.key();
                 ssi.remove(c.key());
-                ssi.splay(ssi.getTop(), STRING_MIN);
+                if (getTop() != null) {
+                    ssi.setTop(ssi.splay(ssi.getTop(), STRING_MIN));
+                } else {
+                    ssi.setTop(null);
+                }
+                c = cell(null, null, ssi.getTop());
                 return temp;
             } else {
                 throw new NoSuchElementException("Reached end of tree, no child to go to.");
