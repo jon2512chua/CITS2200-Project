@@ -102,7 +102,7 @@ public interface ISplayFC {
 	 * this SplayFC tree, as well as returning an extracted tree with as much 
 	 * sharing of cells as possible.
 	 * 
-	 * @param k The minimum string key to include.
+	 * @param k  The string below which keys should be included.
 	 * @return The exracted splay tree.
 	 */
 	public SplayFC headSet(String k);
@@ -113,7 +113,7 @@ public interface ISplayFC {
 	 * this SplayFC tree, as well as returning an extracted tree with as much 
 	 * sharing of cells as possible.
 	 * 
-	 * @param k  The string below which keys should be included.
+	 * @param k The minimum string key to include.
 	 * @return The extacted splay tree.
 	 */
 	public SplayFC tailSet(String k);
