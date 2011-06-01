@@ -121,9 +121,9 @@ public class SplayFC implements ISplayFC {
 
                 Cell lr = splay(c.lt.rt, k);
                 // rearranged parent
-                Cell newRRP = cell(c.lt.key(), c.lt.lt, c.lt.rt.lt);
+                Cell newRRP = cell(c.lt.key(), c.lt.lt, lr.lt);
                 // rearranged grandparent
-                Cell newRRG = cell(c.key(), c.lt.rt.rt, c.rt);
+                Cell newRRG = cell(c.key(), lr.rt, c.rt);
                 return cell(lr.key(), newRRP, newRRG);
             } else // left zig step
             {
@@ -137,13 +137,13 @@ public class SplayFC implements ISplayFC {
                 Cell newRR = cell(c.key(), c.lt, c.rt.lt); // Rearrange
                 return cell(rr.key(), cell(c.rt.key(), newRR, rr.lt), rr.rt);
 
-            } else if (compareToRtKey > 0 && c.rt.lt != null) { // right zig-zag step
+            } else if (compareToRtKey < 0 && c.rt.lt != null) { // right zig-zag step
 
                 Cell rl = splay(c.rt.lt, k);
                 // rearranged parent
-                Cell newRRP = cell(c.rt.key(), c.rt.lt.rt, c.rt.rt);
+                Cell newRRP = cell(c.rt.key(), rl.rt, c.rt.rt);
                 // rearranged grandparent
-                Cell newRRG = cell(c.key(), c.lt, c.rt.lt.lt);
+                Cell newRRG = cell(c.key(), c.lt, rl.lt);
                 return cell(rl.key(), newRRG, newRRP);
 
             } else // right zig step
