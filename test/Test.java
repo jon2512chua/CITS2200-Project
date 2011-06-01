@@ -197,7 +197,7 @@ public class Test {
 
  		test_contains(t1, name, "h");
 		test_contains(t1, name, "hand");
-		test_contains(t1,name,"hello");		
+		test_contains(t1, name, "hello");
 		
 		System.out.println();
 		printDivider("------ Starting test for SplayFC iterator ------");
