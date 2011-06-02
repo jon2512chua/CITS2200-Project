@@ -15,6 +15,7 @@ public class SplayFC implements ISplayFC {
     public Cell top;
     
     // Number of times modified!
+    // private helper variable
     public int modCount = 0;
     /**
      * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
@@ -394,6 +395,7 @@ public class SplayFC implements ISplayFC {
      */
     public SplayFC clone() {
         SplayFC newSplayFC = new SplayFC(getTop());
+        newSplayFC.modCount = this.modCount;
         return newSplayFC;
     }
 
@@ -495,7 +497,7 @@ public class SplayFC implements ISplayFC {
             upi = sfc.clone();
             upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
             c = cell(null, null, upi.getTop());
-            expectedModCount = sfc.modCount;
+            expectedModCount = upi.modCount; // equals the clones mod counter
             System.out.println(expectedModCount);
         }
 
@@ -507,12 +509,16 @@ public class SplayFC implements ISplayFC {
         }
 
         public boolean hasNext() {
+        	upi = ori.clone().tailSet(upi.getTop().key());
+            c = cell(null, null, upi.getTop());
             return (c.rt != null);
         }
 
         public String next() throws NoSuchElementException, ConcurrentModificationException  {
-        	if(modCount != expectedModCount) throw new ConcurrentModificationException();
-            if (hasNext()) {
+        	if(upi.modCount != expectedModCount && ori.modCount != expectedModCount) throw new ConcurrentModificationException();
+            // Use tailset to reclone;
+        	
+        	if (hasNext()) {
                 c = c.rt;
                 String temp = c.key();
                 toBeRemove = temp;
@@ -522,6 +528,7 @@ public class SplayFC implements ISplayFC {
                     upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
                 }
                 c = cell(null, null, upi.getTop());
+               // upi = ori.clone().tailSet(upi.getTop().key());
                 return temp;
             } else {
                 throw new NoSuchElementException("Reached end of tree, no child to go to.");
@@ -534,6 +541,7 @@ public class SplayFC implements ISplayFC {
         		ori.remove(toBeRemove);
         		expectedModCount --;
         		toBeRemove = null;
+        		
         }
     }
 }
