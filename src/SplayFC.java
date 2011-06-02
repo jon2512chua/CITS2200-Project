@@ -292,17 +292,26 @@ public class SplayFC implements ISplayFC {
      * @return The extracted splay tree.
      */
     public SplayFC headSet(String k) {
-        SplayFC treeClone;
-        splay(this.getTop(), k);
-        treeClone = this.clone();
-        //treeClone.splay(treeClone.getTop(), k); // cloned tree is now ordered with k at root
-        Iterator<String> upi = treeClone.updatingIterator(); // iterator of the clone
-        while (upi.next() != null) { // while it does not reach the end of tree
-            upi.next(); //must return the element first before deleting it
-            upi.remove();
+        setTop(splay(getTop(), k));
+        SplayFC treeClone = clone();
+        if (contains(k)) {
+            treeClone.setTop(treeClone.getTop().lt);
+        } else {
+            // may need a compareTo() if there're bugs
+            treeClone.setTop(cell(treeClone.getTop().key(), treeClone.getTop().lt, null));
         }
-        // Once removal of the right sub tree is done
         return treeClone;
+//        SplayFC treeClone;
+//        setTop(splay(this.getTop(), k));
+//        treeClone = this.clone();
+//        //treeClone.splay(treeClone.getTop(), k); // cloned tree is now ordered with k at root
+//        Iterator<String> upi = treeClone.updatingIterator(); // iterator of the clone
+//        while (upi.next() != null) { // while it does not reach the end of tree
+//            upi.next(); //must return the element first before deleting it
+//            upi.remove();
+//        }
+//        // Once removal of the right sub tree is done
+//        return treeClone;
     }
 
     /**
@@ -315,17 +324,22 @@ public class SplayFC implements ISplayFC {
      * @return The extracted splay tree.
      */
     public SplayFC tailSet(String k) {
-        SplayFC treeClone;
-        splay(this.getTop(), k);
-        treeClone = this.clone();
-        Iterator<String> ssi = treeClone.snapShotIterator();
-        splay(treeClone.getTop(), ssi.next()); // ssi,next returns the lowest element in tree
-        Iterator<String> upi = treeClone.updatingIterator(); // upi is now at the root(lowest element)
-        while (!upi.next().equals(k)) {
-            upi.next();
-            upi.remove();
-        }
+        setTop(splay(getTop(), k));
+        SplayFC treeClone = clone();
+        // may need a compareTo() if there're bugs
+        treeClone.setTop(cell(treeClone.getTop().key(), null, treeClone.getTop().rt));
         return treeClone;
+//        SplayFC treeClone;
+//        splay(this.getTop(), k);
+//        treeClone = this.clone();
+//        Iterator<String> ssi = treeClone.snapShotIterator();
+//        splay(treeClone.getTop(), ssi.next()); // ssi,next returns the lowest element in tree
+//        Iterator<String> upi = treeClone.updatingIterator(); // upi is now at the root(lowest element)
+//        while (!upi.next().equals(k)) {
+//            upi.next();
+//            upi.remove();
+//        }
+//        return treeClone;
     }
 
     /**
@@ -407,7 +421,7 @@ public class SplayFC implements ISplayFC {
      *
      */
     public Iterator<String> updatingIterator() {
-        throw new RuntimeException("iterator: implementation incomplete");
+        return new UpdatingIterator(this);
     }
 
     // Implement the two iterator methods above by implementing the two iterator classes below.
@@ -457,6 +471,9 @@ public class SplayFC implements ISplayFC {
     }
 
     public class UpdatingIterator implements Iterator<String> {
+
+        public UpdatingIterator(SplayFC sfc) {
+        }
 
         // You need to implement the following two methods here.
         public boolean hasNext() {
