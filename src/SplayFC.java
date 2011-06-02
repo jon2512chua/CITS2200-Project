@@ -1,4 +1,5 @@
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -14,6 +15,10 @@ public class SplayFC implements ISplayFC {
      * the current root cell
      */
     public Cell top;
+    
+    // Number of times modified!
+    // private helper variable
+    public int modCount = 0;
     /**
      * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
      * that will be in a SplayFC tree.  Splaying on these is sometimes useful.
@@ -186,10 +191,11 @@ public class SplayFC implements ISplayFC {
     public boolean add(String k) {
         if (top == null) {
             top = cell(k, null, null);
+            modCount ++;
             return true;
         }
         Cell s = splay(top, k);
-        if (s.key().equals(k)) {
+        if (s.key().equals(k)) { // checks if its already in the tree
             return false;
         } else {
             if (s.lt == null && k.compareTo(s.key()) < 0) {
@@ -197,6 +203,7 @@ public class SplayFC implements ISplayFC {
                 Cell newS = cell(s.key(), l, s.rt);
                 setTop(newS);
                 setTop(splay(top, k));
+                modCount ++;
                 return true;
             }
             if (s.rt == null && k.compareTo(s.key()) > 0) {
@@ -204,6 +211,7 @@ public class SplayFC implements ISplayFC {
                 Cell newS = cell(s.key(), s.lt, r);
                 setTop(newS);
                 setTop(splay(top, k));
+                modCount ++;
                 return true;
             }
 
@@ -213,6 +221,7 @@ public class SplayFC implements ISplayFC {
                 Cell newTop = cell(k, s.lt, newS);
                 setTop(newTop);
                 setTop(splay(top, k));
+                modCount ++;
                 return true;
             }
             if (s.rt != null && k.compareTo(s.rt.key()) < 0 && k.compareTo(s.key()) > 0) {
@@ -221,6 +230,7 @@ public class SplayFC implements ISplayFC {
                 Cell newTop = cell(k, newS, s.rt);
                 setTop(newTop);
                 setTop(splay(top, k));
+                modCount ++;
                 return true;
             }
 
@@ -250,19 +260,23 @@ public class SplayFC implements ISplayFC {
                 setTop(splay(top, k));
                 if ((top.lt == null) && (top.rt == null)) {
                     setTop(null);
+                    modCount --;
                     return true;
                 } else if (top.lt == null) {
                     Cell newTop = cell(top.rt.key(), top.rt.lt, top.rt.rt);
                     setTop(newTop);
+                    modCount --;
                     return true;
                 } else if (top.rt == null) {
                     Cell newTop = cell(top.lt.key(), top.lt.lt, top.lt.rt);
                     setTop(newTop);
+                    modCount --;
                     return true;
                 } else {
                     Cell l = splay(top.lt, STRING_MAX);
                     Cell newTop = cell(l.key(), l.lt, top.rt);
                     setTop(newTop);
+                    modCount --;
                     return true;
                 }
             } else {
@@ -383,6 +397,7 @@ public class SplayFC implements ISplayFC {
      */
     public SplayFC clone() {
         SplayFC newSplayFC = new SplayFC(getTop());
+        newSplayFC.modCount = this.modCount;
         return newSplayFC;
     }
 
@@ -473,21 +488,62 @@ public class SplayFC implements ISplayFC {
     }
 
     public class UpdatingIterator implements Iterator<String> {
+        private SplayFC upi;
+        private Cell c;
+        public int expectedModCount;
+        private SplayFC ori;
+        private String toBeRemove;
 
         public UpdatingIterator(SplayFC sfc) {
+        	ori = sfc;
+            upi = sfc.clone();
+            upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
+            c = cell(null, null, upi.getTop());
+            expectedModCount = upi.modCount; // equals the clones mod counter
+            System.out.println(expectedModCount);
         }
 
-        // You need to implement the following two methods here.
+        public String toString() {
+            if (upi.getTop() == null) {
+                return "[]\n";
+            }
+            return upi.getTop().toString("", "   ", "   ", " -");
+        }
+
         public boolean hasNext() {
-            throw new RuntimeException("hasNext: implementation incomplete");
+        	upi = ori.clone().tailSet(upi.getTop().key());
+            c = cell(null, null, upi.getTop());
+            return (c.rt != null);
         }
 
-        public String next() {
-            throw new RuntimeException("next: implementation incomplete");
+        public String next() throws NoSuchElementException, ConcurrentModificationException  {
+        	if(upi.modCount != expectedModCount && ori.modCount != expectedModCount) throw new ConcurrentModificationException();
+            // Use tailset to reclone;
+        	
+        	if (hasNext()) {
+                c = c.rt;
+                String temp = c.key();
+                toBeRemove = temp;
+                upi.remove(c.key());
+                expectedModCount --;
+                if (upi.getTop() != null) {
+                    upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
+                }
+                c = cell(null, null, upi.getTop());
+               // upi = ori.clone().tailSet(upi.getTop().key());
+                return temp;
+            } else {
+                throw new NoSuchElementException("Reached end of tree, no child to go to.");
+            }
         }
 
         public void remove() {
-            throw new RuntimeException("remove: implementation incomplete");
+        	if(toBeRemove == null) throw new IllegalStateException("Next has not been called recently! " +
+        			"or remove has already been called once");
+        		ori.remove(toBeRemove);
+        		expectedModCount --;
+        		toBeRemove = null;
+        		
         }
     }
 }
