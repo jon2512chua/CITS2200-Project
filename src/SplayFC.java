@@ -366,7 +366,7 @@ public class SplayFC implements ISplayFC {
      * @return The created SplayFC object.
      */
     public SplayFC clone() {
-        SplayFC newSplayFC = this;
+        SplayFC newSplayFC = new SplayFC(getTop());
         return newSplayFC;
     }
 
@@ -440,10 +440,8 @@ public class SplayFC implements ISplayFC {
                 c = c.rt;
                 String temp = c.key();
                 ssi.remove(c.key());
-                if (getTop() != null) {
+                if (ssi.getTop() != null) {
                     ssi.setTop(ssi.splay(ssi.getTop(), STRING_MIN));
-                } else {
-                    ssi.setTop(null);
                 }
                 c = cell(null, null, ssi.getTop());
                 return temp;
