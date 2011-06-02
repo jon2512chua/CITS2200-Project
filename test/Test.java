@@ -76,23 +76,29 @@ public class Test {
         t.add("helped");
         print(t, name);
 
-//		System.out.println("updatingIterator over " + name + " ...");
-//
-//		Iterator<String> it3 = t.updatingIterator();
-//		System.out.println(it3.toString());
-//		i = 0;
-//		while (it3.hasNext()) {
-//			try {
-//				if(++i == 11) t.remove("some");
-//				String ans = it3.next();
-//				System.out.println(i + " Next: " + show(ans));
-//				if(i == 3) t.remove("helped");
-//			} catch (ConcurrentModificationException e) { System.out.println("thrown " + e); }
-//		}
-//
-//		t.add("some");
-//		t.add("helped");
-//		print(t, name);
+        System.out.println("updatingIterator over " + name + " ...");
+
+        Iterator<String> it3 = t.updatingIterator();
+        System.out.println(it3.toString());
+        i = 0;
+        while (it3.hasNext()) {
+            try {
+                if (++i == 11) {
+                    t.remove("some");
+                }
+                String ans = it3.next();
+                System.out.println(i + " Next: " + show(ans));
+                if (i == 3) {
+                    t.remove("helped");
+                }
+            } catch (ConcurrentModificationException e) {
+                System.out.println("thrown " + e);
+            }
+        }
+
+        t.add("some");
+        t.add("helped");
+        print(t, name);
 
     }
 
