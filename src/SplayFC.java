@@ -292,26 +292,24 @@ public class SplayFC implements ISplayFC {
      * @return The extracted splay tree.
      */
     public SplayFC headSet(String k) {
-        setTop(splay(getTop(), k));
-        SplayFC treeClone = clone();
-        if (contains(k)) {
-            treeClone.setTop(treeClone.getTop().lt);
+        if (getTop() == null) {
+            // if the tree is empty, return as it is
+            SplayFC treeClone = clone();
+            return treeClone;
         } else {
-            // may need a compareTo() if there're bugs
-            treeClone.setTop(cell(treeClone.getTop().key(), treeClone.getTop().lt, null));
+            setTop(splay(getTop(), k));
+            SplayFC treeClone = clone();
+            if (contains(k)) {
+                treeClone.setTop(treeClone.getTop().lt);
+            } else {
+                treeClone.setTop(cell(treeClone.getTop().key(), treeClone.getTop().lt, null));
+            }
+            // if k is still less than the smallest
+            if (k.compareTo(treeClone.getTop().key()) < 0) {
+                treeClone.setTop(null);
+            }
+            return treeClone;
         }
-        return treeClone;
-//        SplayFC treeClone;
-//        splay(this.getTop(), k);
-//        treeClone = this.clone();
-//        //treeClone.splay(treeClone.getTop(), k); // cloned tree is now ordered with k at root
-//        Iterator<String> upi = treeClone.updatingIterator(); // iterator of the clone
-//        while (upi.next() != null) { // while it does not reach the end of tree
-//            upi.next(); //must return the element first before deleting it
-//            upi.remove();
-//        }
-//        // Once removal of the right sub tree is done
-//        return treeClone;
     }
 
     /**
@@ -324,22 +322,20 @@ public class SplayFC implements ISplayFC {
      * @return The extracted splay tree.
      */
     public SplayFC tailSet(String k) {
-        setTop(splay(getTop(), k));
-        SplayFC treeClone = clone();
-        // may need a compareTo() if there're bugs
-        treeClone.setTop(cell(treeClone.getTop().key(), null, treeClone.getTop().rt));
-        return treeClone;
-//        SplayFC treeClone;
-//        splay(this.getTop(), k);
-//        treeClone = this.clone();
-//        Iterator<String> ssi = treeClone.snapShotIterator();
-//        splay(treeClone.getTop(), ssi.next()); // ssi,next returns the lowest element in tree
-//        Iterator<String> upi = treeClone.updatingIterator(); // upi is now at the root(lowest element)
-//        while (!upi.next().equals(k)) {
-//            upi.next();
-//            upi.remove();
-//        }
-//        return treeClone;
+        if (getTop() == null) {
+            // if the tree is empty, return as it is
+            SplayFC treeClone = clone();
+            return treeClone;
+        } else {
+            setTop(splay(getTop(), k));
+            SplayFC treeClone = clone();
+            treeClone.setTop(cell(treeClone.getTop().key(), null, treeClone.getTop().rt));
+            // if k is still more than the greatest
+            if (k.compareTo(treeClone.getTop().key()) > 0) {
+                treeClone.setTop(null);
+            }
+            return treeClone;
+        }
     }
 
     /**
@@ -351,8 +347,9 @@ public class SplayFC implements ISplayFC {
      * @return The extracted splay tree.
      */
     public SplayFC subSet(String k1, String k2) {
-        SplayFC subTree = tailSet(k1);
-        subTree = headSet(k2);
+        // WIP
+        SplayFC subTree = headSet(k2);
+        subTree = subTree.tailSet(k1);
         return subTree;
 //        SplayFC treeClone;
 //        treeClone = this.clone();
