@@ -4,6 +4,8 @@ import java.util.NoSuchElementException;
 
 /**
  * An implementation of a splay tree of strings with fast cloning and subset extraction.
+ * @author Jonathan Chua (10996944)
+ * @author Jonathan Eng (20263557)
  * @version 1.1
  */
 public class SplayFC implements ISplayFC {
