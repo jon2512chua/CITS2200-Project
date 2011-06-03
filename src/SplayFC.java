@@ -15,9 +15,6 @@ public class SplayFC implements ISplayFC {
      * the current root cell
      */
     public Cell top;
-    // Number of times modified!
-    // private helper variable
-    public int modCount = 0;
     /**
      * Strings that are below (STRING_MIN) and above (STRING_MAX) are all the words
      * that will be in a SplayFC tree.  Splaying on these is sometimes useful.
@@ -25,11 +22,19 @@ public class SplayFC implements ISplayFC {
     final static String STRING_MIN = "";
     final static String STRING_MAX = Character.toString(Character.MAX_VALUE);
 
+    /* -- Begin private helper variables. -- */
+    /**
+     * to keep track of any changes to the tree
+     */
+    private int modCount;
+    /* -- End private helper variables. -- */
+
     /**
      * Constructs a SplayFC with a null root.
      */
     public SplayFC() {
         top = null;
+        modCount = 0;
     }
 
     /**
@@ -38,6 +43,7 @@ public class SplayFC implements ISplayFC {
      */
     public SplayFC(Cell c) {
         top = c;
+        modCount = 0;
     }
 
     /**
@@ -489,18 +495,17 @@ public class SplayFC implements ISplayFC {
     public class UpdatingIterator implements Iterator<String> {
 
         private SplayFC upi;
-        private Cell c;
-        public int expectedModCount;
         private SplayFC ori;
-        private String toBeRemove;
+        private Cell c;
+        private String toBeRemoved = null;
+        private int expectedModCount;
 
         public UpdatingIterator(SplayFC sfc) {
             ori = sfc;
             upi = sfc.clone();
             upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
             c = cell(null, null, upi.getTop());
-            expectedModCount = upi.modCount; // equals the clones mod counter
-            System.out.println(expectedModCount);
+            expectedModCount = upi.modCount;
         }
 
         public String toString() {
@@ -511,43 +516,48 @@ public class SplayFC implements ISplayFC {
         }
 
         public boolean hasNext() {
-            upi = ori.clone().tailSet(upi.getTop().key());
-            c = cell(null, null, upi.getTop());
+            if (expectedModCount != ori.modCount) {
+                String currentKey = upi.getTop().key();
+                upi = ori.clone();
+                upi.setTop(upi.splay(upi.getTop(), currentKey));
+                c = cell(null, null, upi.getTop());
+            }
             return (c.rt != null);
         }
 
         public String next() throws NoSuchElementException, ConcurrentModificationException {
-            if (upi.modCount != expectedModCount && ori.modCount != expectedModCount) {
-                throw new ConcurrentModificationException();
-            }
-            // Use tailset to reclone;
-
             if (hasNext()) {
-                c = c.rt;
-                String temp = c.key();
-                toBeRemove = temp;
-                upi.remove(c.key());
-                expectedModCount--;
-                if (upi.getTop() != null) {
-                    upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
+                if (expectedModCount == ori.modCount) {
+                    c = c.rt;
+                    String temp = c.key();
+                    toBeRemoved = temp;
+                    upi.remove(c.key());
+                    // to counter the remove() above
+                    upi.modCount++;
+                    if (upi.getTop() != null) {
+                        upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
+                    }
+                    c = cell(null, null, upi.getTop());
+                    return temp;
+                } else {
+                    throw new ConcurrentModificationException("remove() has been "
+                            + "called since the most recent call to hasNext()");
                 }
-                c = cell(null, null, upi.getTop());
-                // upi = ori.clone().tailSet(upi.getTop().key());
-                return temp;
             } else {
                 throw new NoSuchElementException("Reached end of tree, no child to go to.");
             }
         }
 
-        public void remove() {
-            if (toBeRemove == null) {
-                throw new IllegalStateException("Next has not been called recently! "
-                        + "or remove has already been called once");
+        public void remove() throws IllegalStateException {
+            if (toBeRemoved != null) {
+                ori.remove(toBeRemoved);
+                toBeRemoved = null;
+                expectedModCount--;
+            } else {
+                throw new IllegalStateException("next() has not yet been called,"
+                        + "or remove() has already been called after the last"
+                        + "call to next()");
             }
-            ori.remove(toBeRemove);
-            expectedModCount--;
-            toBeRemove = null;
-
         }
     }
 }
