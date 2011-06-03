@@ -428,20 +428,35 @@ public class SplayFC implements ISplayFC {
         return new UpdatingIterator(this);
     }
 
-    // Implement the two iterator methods above by implementing the two iterator classes below.
-    // Iterator that visits the min to max strings in order
-    // Note should not rebalance the tree as ur traversing
+    /**
+     * An iterator over SplayFC which provides a snapshot of the state of the
+     * tree at the point in time when it is created.
+     */
     public class SnapShotIterator implements Iterator<String> {
 
+        /**
+         * a cloned SplayFC to iterate over
+         */
         private SplayFC ssi;
+        /**
+         * a cell whose right child node points to the root of ssi
+         */
         private Cell c;
 
+        /**
+         * creates an instance of the SnapShotIterator
+         * @param sfc the current SplayFC object to be cloned
+         */
         public SnapShotIterator(SplayFC sfc) {
             ssi = sfc.clone();
             ssi.setTop(ssi.splay(ssi.getTop(), STRING_MIN));
             c = cell(null, null, ssi.getTop());
         }
 
+        /**
+         * prints out the state of SplayFC
+         * @return an ASCII diagram of the state of SplayFC
+         */
         public String toString() {
             if (ssi.getTop() == null) {
                 return "[]\n";
@@ -449,10 +464,20 @@ public class SplayFC implements ISplayFC {
             return ssi.getTop().toString("", "   ", "   ", " -");
         }
 
+        /**
+         * returns true if next() returns an element rather than throw
+         * an exception
+         * @return true iff the iterator has more elements
+         */
         public boolean hasNext() {
             return (c.rt != null);
         }
 
+        /**
+         * returns the next element in the iteration
+         * @return the next element in the iteration
+         * @throws NoSuchElementException itertion has no more elements
+         */
         public String next() throws NoSuchElementException {
             if (hasNext()) {
                 c = c.rt;
@@ -468,19 +493,40 @@ public class SplayFC implements ISplayFC {
             }
         }
 
-        // You should leave the remove method as unsupported.
+        /**
+         * unsupported method
+         */
         public void remove() {
             throw new UnsupportedOperationException("remove");
         }
     }
 
+    /**
+     * An iterator of SplayFC that updates itself whenever SplayFC is changed.
+     */
     public class UpdatingIterator implements Iterator<String> {
 
+        /**
+         * a cloned SplayFC to iterate over
+         */
         private SplayFC upi;
+        /**
+         * a reference to the original SplayFC
+         */
         private SplayFC ori;
+        /**
+         * a cell whose right child node points to the root of ssi
+         */
         private Cell c;
+        /**
+         * keeps track of which string remove() should be deleting
+         */
         private String toBeRemoved = null;
 
+        /**
+         * creates an instance of the UpdatingIterator
+         * @param sfc the current SplayFC object to be cloned
+         */
         public UpdatingIterator(SplayFC sfc) {
             ori = sfc;
             upi = sfc.clone();
@@ -488,6 +534,10 @@ public class SplayFC implements ISplayFC {
             c = cell(null, null, upi.getTop());
         }
 
+        /**
+         * prints out the state of SplayFC
+         * @return an ASCII diagram of the state of SplayFC
+         */
         public String toString() {
             if (upi.getTop() == null) {
                 return "[]\n";
@@ -495,6 +545,11 @@ public class SplayFC implements ISplayFC {
             return upi.getTop().toString("", "   ", "   ", " -");
         }
 
+        /**
+         * returns true if next() returns an element rather than throw
+         * an exception
+         * @return true iff the iterator has more elements
+         */
         public boolean hasNext() {
             if (upi.modCount != ori.modCount) {
                 upi = ori.clone().tailSet(upi.getTop().key());
@@ -503,6 +558,13 @@ public class SplayFC implements ISplayFC {
             return (c.rt != null);
         }
 
+        /**
+         * returns the next element in the iteration
+         * @return the next element in the iteration
+         * @throws NoSuchElementException iteration has no more elements
+         * @throws ConcurrentModificationException remove() has been called to
+         *  SplayFC since the most recent call to hasNext()
+         */
         public String next() throws NoSuchElementException, ConcurrentModificationException {
             if (upi.modCount != ori.modCount) {
                 throw new ConcurrentModificationException();
@@ -529,6 +591,11 @@ public class SplayFC implements ISplayFC {
             }
         }
 
+        /**
+         * removes from the underlying collection the last element returned by the iterator.
+         * @throws IllegalStateException if the next method has not yet been called,
+         *  or the remove method has already been called after the last call to the next method
+         */
         public void remove() throws IllegalStateException {
             if (toBeRemoved != null) {
                 ori.remove(toBeRemoved);
