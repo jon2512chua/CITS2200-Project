@@ -498,14 +498,12 @@ public class SplayFC implements ISplayFC {
         private SplayFC ori;
         private Cell c;
         private String toBeRemoved = null;
-        private int expectedModCount;
 
         public UpdatingIterator(SplayFC sfc) {
             ori = sfc;
             upi = sfc.clone();
             upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
             c = cell(null, null, upi.getTop());
-            expectedModCount = upi.modCount;
         }
 
         public String toString() {
@@ -516,18 +514,19 @@ public class SplayFC implements ISplayFC {
         }
 
         public boolean hasNext() {
-            if (expectedModCount != ori.modCount) {
-                String currentKey = upi.getTop().key();
-                upi = ori.clone();
-                upi.setTop(upi.splay(upi.getTop(), currentKey));
+            if (upi.modCount != ori.modCount) {
+                upi = ori.clone().tailSet(upi.getTop().key());
                 c = cell(null, null, upi.getTop());
             }
             return (c.rt != null);
         }
 
         public String next() throws NoSuchElementException, ConcurrentModificationException {
+            if (upi.modCount != ori.modCount) {
+                throw new ConcurrentModificationException();
+            }
             if (hasNext()) {
-                if (expectedModCount == ori.modCount) {
+                if (upi.modCount == ori.modCount) {
                     c = c.rt;
                     String temp = c.key();
                     toBeRemoved = temp;
@@ -552,7 +551,7 @@ public class SplayFC implements ISplayFC {
             if (toBeRemoved != null) {
                 ori.remove(toBeRemoved);
                 toBeRemoved = null;
-                expectedModCount--;
+                upi.modCount--;
             } else {
                 throw new IllegalStateException("next() has not yet been called,"
                         + "or remove() has already been called after the last"
