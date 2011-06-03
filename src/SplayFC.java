@@ -15,7 +15,6 @@ public class SplayFC implements ISplayFC {
      * the current root cell
      */
     public Cell top;
-    
     // Number of times modified!
     // private helper variable
     public int modCount = 0;
@@ -191,7 +190,7 @@ public class SplayFC implements ISplayFC {
     public boolean add(String k) {
         if (top == null) {
             top = cell(k, null, null);
-            modCount ++;
+            modCount++;
             return true;
         }
         Cell s = splay(top, k);
@@ -203,7 +202,7 @@ public class SplayFC implements ISplayFC {
                 Cell newS = cell(s.key(), l, s.rt);
                 setTop(newS);
                 setTop(splay(top, k));
-                modCount ++;
+                modCount++;
                 return true;
             }
             if (s.rt == null && k.compareTo(s.key()) > 0) {
@@ -211,7 +210,7 @@ public class SplayFC implements ISplayFC {
                 Cell newS = cell(s.key(), s.lt, r);
                 setTop(newS);
                 setTop(splay(top, k));
-                modCount ++;
+                modCount++;
                 return true;
             }
 
@@ -221,7 +220,7 @@ public class SplayFC implements ISplayFC {
                 Cell newTop = cell(k, s.lt, newS);
                 setTop(newTop);
                 setTop(splay(top, k));
-                modCount ++;
+                modCount++;
                 return true;
             }
             if (s.rt != null && k.compareTo(s.rt.key()) < 0 && k.compareTo(s.key()) > 0) {
@@ -230,7 +229,7 @@ public class SplayFC implements ISplayFC {
                 Cell newTop = cell(k, newS, s.rt);
                 setTop(newTop);
                 setTop(splay(top, k));
-                modCount ++;
+                modCount++;
                 return true;
             }
 
@@ -260,23 +259,23 @@ public class SplayFC implements ISplayFC {
                 setTop(splay(top, k));
                 if ((top.lt == null) && (top.rt == null)) {
                     setTop(null);
-                    modCount --;
+                    modCount--;
                     return true;
                 } else if (top.lt == null) {
                     Cell newTop = cell(top.rt.key(), top.rt.lt, top.rt.rt);
                     setTop(newTop);
-                    modCount --;
+                    modCount--;
                     return true;
                 } else if (top.rt == null) {
                     Cell newTop = cell(top.lt.key(), top.lt.lt, top.lt.rt);
                     setTop(newTop);
-                    modCount --;
+                    modCount--;
                     return true;
                 } else {
                     Cell l = splay(top.lt, STRING_MAX);
                     Cell newTop = cell(l.key(), l.lt, top.rt);
                     setTop(newTop);
-                    modCount --;
+                    modCount--;
                     return true;
                 }
             } else {
@@ -488,6 +487,7 @@ public class SplayFC implements ISplayFC {
     }
 
     public class UpdatingIterator implements Iterator<String> {
+
         private SplayFC upi;
         private Cell c;
         public int expectedModCount;
@@ -495,7 +495,7 @@ public class SplayFC implements ISplayFC {
         private String toBeRemove;
 
         public UpdatingIterator(SplayFC sfc) {
-        	ori = sfc;
+            ori = sfc;
             upi = sfc.clone();
             upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
             c = cell(null, null, upi.getTop());
@@ -511,26 +511,28 @@ public class SplayFC implements ISplayFC {
         }
 
         public boolean hasNext() {
-        	upi = ori.clone().tailSet(upi.getTop().key());
+            upi = ori.clone().tailSet(upi.getTop().key());
             c = cell(null, null, upi.getTop());
             return (c.rt != null);
         }
 
-        public String next() throws NoSuchElementException, ConcurrentModificationException  {
-        	if(upi.modCount != expectedModCount && ori.modCount != expectedModCount) throw new ConcurrentModificationException();
+        public String next() throws NoSuchElementException, ConcurrentModificationException {
+            if (upi.modCount != expectedModCount && ori.modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
             // Use tailset to reclone;
-        	
-        	if (hasNext()) {
+
+            if (hasNext()) {
                 c = c.rt;
                 String temp = c.key();
                 toBeRemove = temp;
                 upi.remove(c.key());
-                expectedModCount --;
+                expectedModCount--;
                 if (upi.getTop() != null) {
                     upi.setTop(upi.splay(upi.getTop(), STRING_MIN));
                 }
                 c = cell(null, null, upi.getTop());
-               // upi = ori.clone().tailSet(upi.getTop().key());
+                // upi = ori.clone().tailSet(upi.getTop().key());
                 return temp;
             } else {
                 throw new NoSuchElementException("Reached end of tree, no child to go to.");
@@ -538,12 +540,14 @@ public class SplayFC implements ISplayFC {
         }
 
         public void remove() {
-        	if(toBeRemove == null) throw new IllegalStateException("Next has not been called recently! " +
-        			"or remove has already been called once");
-        		ori.remove(toBeRemove);
-        		expectedModCount --;
-        		toBeRemove = null;
-        		
+            if (toBeRemove == null) {
+                throw new IllegalStateException("Next has not been called recently! "
+                        + "or remove has already been called once");
+            }
+            ori.remove(toBeRemove);
+            expectedModCount--;
+            toBeRemove = null;
+
         }
     }
 }
